@@ -2,6 +2,9 @@ import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from slugify import slugify
 
+# Substitute 'vagrant' in next line with the name of your default database
+DEFAULT_DB = 'vagrant'
+#This will be the name of the new database:
 dbname = 'rep_catalog'
 
 def setupDB(db,c):
@@ -45,7 +48,7 @@ try:
 	db.close()
 except psycopg2.OperationalError:
 	# If not, create database
-	db = psycopg2.connect(dbname='vagrant')
+	db = psycopg2.connect(dbname=DEFAULT_DB)
 	db.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 	c = db.cursor()
 	c.execute('CREATE DATABASE ' + dbname)

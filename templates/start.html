@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Repertorio | The musicians catalog</title>
+</head>
+<body>
+	<header>	
+	</header>
+	<main>
+	{% for r in result %}
+            <p><a href="/instruments/{{r[1]}}">{{r[0]}}</a></p>
+    {% endfor %}	
+	</main>
+	<footer>
+	</footer>
+</body>
+</html>

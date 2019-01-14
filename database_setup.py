@@ -10,7 +10,7 @@ dbname = 'rep_catalog'
 def setupDB(db,c):
 	# Create tables
 	c.execute("""CREATE TABLE musicians(url TEXT PRIMARY KEY, name TEXT,
-	bio TEXT, email TEXT, tel TEXT, address TEXT)""")
+	bio TEXT, email TEXT, public INT, tel TEXT, address TEXT)""")
 
 	c.execute("""CREATE TABLE instruments(url TEXT PRIMARY KEY, name TEXT,
 	rank INT, creator TEXT)""")
@@ -28,10 +28,12 @@ def setupDB(db,c):
 	'Oboe',	'Clarinet', 'Bassoon', 'Horn', 'Trumpet', 'Trombone', 'Tuba',
 	'Timpani', 'Percussion', 'Piano', 'Conductor']
 
+	i=1
 	for instrument in instruments:
-		data = (slugify(instrument), instrument)
-		query = "INSERT INTO instruments (url,name) VALUES (%s,%s)"
+		data = (slugify(instrument), instrument, i)
+		query = "INSERT INTO instruments (url,name,rank) VALUES (%s,%s,%s)"
 		c.execute(query,data)
+		i += 1
 	db.commit()
 
 	query = "SELECT COUNT(*) FROM instruments"
@@ -41,11 +43,7 @@ def setupDB(db,c):
 
 # Check if database exists
 try:
-	db = psycopg2.connect(dbname=dbname)
-	c = db.cursor()
-	# If yes, populate it!
-	setupDB(db,c)
-	db.close()
+	db = psycopg2.connect(dbname=dbname) 
 except psycopg2.OperationalError:
 	# If not, create database
 	db = psycopg2.connect(dbname=DEFAULT_DB)
@@ -55,9 +53,9 @@ except psycopg2.OperationalError:
 	db.commit()
 	db.close()
 	db = psycopg2.connect(dbname=dbname)
-	c = db.cursor()
-	# Populate new DB and report number of initial inserts
-	num = setupDB(db,c)
-	print("{} instruments added".format(num))
-	db.close()
+c = db.cursor()
+# Populate new DB and report number of initial inserts
+num = setupDB(db,c)
+print("{} instruments added".format(num))
+db.close()
 

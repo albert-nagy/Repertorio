@@ -7,10 +7,11 @@
 </head>
 <body>
 	<header>
+{% if 'username' not in login_session %}
 	<script>
   window.fbAsyncInit = function() {
     FB.init({
-      appId      : '403018193771547',
+      appId      : '298184334231264',
       cookie     : true,
       xfbml      : true,
       version    : 'v3.2'
@@ -63,7 +64,37 @@
 <fb:login-button
   scope="public_profile,email"
   onlogin="sendTokenToServer();">
-</fb:login-button>	
+</fb:login-button>
+
+		{% else %}
+		<script type="text/javascript">
+function Logout()
+	{
+	page = window.location;
+	$.ajax({
+      type: 'GET',
+      url: '/disconnect',
+      success: function(result) {
+      window.location.href = page;}
+		});	
+	}
+		</script>
+					<p><a onclick="Logout();" href="javascript:void(0)">Logout</a></p>
+{% endif %}
+		
+		<div class = 'flash'>
+		      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          
+        <ul>
+        {% for message in messages %}
+            <li> <strong> {{ message }} </strong> </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+
+		</div>
 	</header>
 	<main>
 	{% for r in result %}

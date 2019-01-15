@@ -1,3 +1,5 @@
+*.pyc
+*secret*
 proba.py
 .vagrant/
 Vagrantfile

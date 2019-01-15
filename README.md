@@ -15,10 +15,10 @@ pip3 install psycopg2-binary python-slugify
 
 python3 database_setup.py
 ```
-Install flask and ... modules, then run application.py to start server.
+Install flask and oauth2client modules, then run application.py to start server.
 
 ```bash
-pip3 install flask
+pip3 install flask oauth2client
 
 python3 application.py
 ```

@@ -21,6 +21,13 @@ APPLICATION_NAME = "Repertorio App"
 
 dbname = 'rep_catalog'
 
+class DBconn:
+	def __enter__(self):
+		self.db = psycopg2.connect(dbname=dbname)
+		return self.db.cursor()
+	def __exit__(self, type, value, traceback):
+		self.db.close()
+
 def makeState():
 	state = ''
 	if 'username' not in login_session:
@@ -257,13 +264,11 @@ def disconnect():
 
 @app.route('/')
 def showIndex():
-	db = psycopg2.connect(dbname=dbname)
-	c = db.cursor()
-	query = "SELECT name, url FROM instruments ORDER BY rank"
-	c.execute(query)
-	result = c.fetchall()
-	db.close()
-	return render_template('start.html', result=result, STATE=makeState(), login_session=login_session)
+	with DBconn() as c:
+		query = "SELECT name, url FROM instruments ORDER BY rank"
+		c.execute(query)
+		result = c.fetchall()
+		return render_template('start.html', result=result, STATE=makeState(), login_session=login_session)
 
 
 

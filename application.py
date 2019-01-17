@@ -146,14 +146,8 @@ def gconnect():
     	user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
-    output = ''
-    output += '<h1>Welcome, '
-    output += login_session['username']
-    output += '!</h1>'
-    output += '<img src="'
-    output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as {}".format(login_session['username']))
+    output = "you are now logged in as {}".format(login_session['username'])
+    flash(output)
     return output
 
 @app.route('/fbconnect', methods=['POST'])
@@ -163,9 +157,7 @@ def fbconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = request.data.decode()
-    # print("access token received %s " % access_token)
-# 
-
+   
     app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
         'web']['app_id']
     app_secret = json.loads(
@@ -175,26 +167,16 @@ def fbconnect():
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     result = result.decode()
-    # print(url)
-    # print(result)
-
-
+    
     # Use token to get user info from API
     userinfo_url = "https://graph.facebook.com/v3.2/me"
-    '''
-        Due to the formatting for the result from the server token exchange we have to
-        split the token first on commas and select the first index which gives us the key : value
-        for the server access token then we split it on colons to pull out the actual token value
-        and replace the remaining quotes with nothing so that it can be used directly in the graph
-        api calls
-    '''
+    
     token = result.split(',')[0].split(':')[1].replace('"', '')
 
     url = 'https://graph.facebook.com/v3.2/me?access_token=%s&fields=name,id,email' % token
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
-    # print "url sent for API access:%s"% url
-    # print"API JSON result: %s" % result
+    
     data = json.loads(result.decode())
     login_session['provider'] = 'facebook'
     login_session['username'] = data["name"]
@@ -218,30 +200,19 @@ def fbconnect():
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
-    output = ''
-    output += '<h1>Welcome, '
-    output += login_session['username']
-
-    output += '!</h1>'
-    output += '<img src="'
-    output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-
-    flash("Now logged in as %s" % login_session['username'])
+    output = "Now logged in as {}".format(login_session['username'])
+    flash(output)
     return output
 
 app.route('/gdisconnect')
 def gdisconnect():
 	access_token = login_session.get('access_token')
 	if access_token:	
-		# print('In gdisconnect access token is %s', access_token)
-		# print ('User name is: ')
-		# print login_session['username']
+	
 		url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
 		h = httplib2.Http()
 		result = h.request(url, 'GET')[0]
-		# print 'result is '
-		# print result
+		
 		if result['status'] == '200':
 			response = make_response(json.dumps('Successfully disconnected.'), 200)
 			response.headers['Content-Type'] = 'application/json'

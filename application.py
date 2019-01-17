@@ -263,7 +263,18 @@ def showIndex():
 		query = "SELECT name, url FROM instruments ORDER BY rank"
 		c.execute(query)
 		result = c.fetchall()
-		return render_template('start.html', result=result, STATE=makeState(), login_session=login_session)
+		return render_template('start.html', result=result, STATE=makeState(),
+			login_session=login_session)
+
+@app.route('/musicians/<musician_id>')
+def showProfile(musician_id):
+	with DBconn() as c:
+		query = """SELECT name, picture, email, public, tel, address
+		FROM musicians WHERE url = %s"""
+		c.execute(query, (login_session['user_id'],))
+		personal_data = c.fetchone()
+		return render_template('profile.html', personal_data=personal_data,
+			STATE=makeState(), login_session=login_session)
 
 
 

@@ -10,7 +10,7 @@ dbname = 'rep_catalog'
 def setupDB(db,c):
 	# Create tables
 	c.execute("""CREATE TABLE musicians(url TEXT PRIMARY KEY, name TEXT,
-	bio TEXT, email TEXT, public INT, tel TEXT, address TEXT)""")
+	picture TEXT, bio TEXT, email TEXT, public INT, tel TEXT, address TEXT)""")
 
 	c.execute("""CREATE TABLE instruments(url TEXT PRIMARY KEY, name TEXT,
 	rank INT, creator TEXT)""")

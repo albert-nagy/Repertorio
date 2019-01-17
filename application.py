@@ -1,7 +1,6 @@
 import psycopg2
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
 
-
 from flask import session as login_session
 import random
 import string
@@ -12,6 +11,8 @@ import httplib2
 import json
 from flask import make_response
 import requests
+
+from slugify import slugify
 
 app = Flask(__name__)
 
@@ -26,6 +27,7 @@ class DBconn:
 		self.db = psycopg2.connect(dbname=dbname)
 		return self.db.cursor()
 	def __exit__(self, type, value, traceback):
+		self.db.commit()
 		self.db.close()
 
 def makeState():
@@ -34,9 +36,31 @@ def makeState():
 		state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in range(32))
 		login_session['state'] = state
-	else:
-		state = login_session['username']
 	return state
+
+def createUser(login_session):
+	with DBconn() as c:
+		url = slugify(login_session['username'])
+		query = "SELECT COUNT(*) FROM musicians WHERE url = %s"
+		c.execute(query, (url,))
+		num = c.fetchone()
+		if num[0] > 0:
+			url = url + str(num[0])
+		data = (url, login_session['username'], login_session['email'],
+			login_session['picture'], 0)
+		query = "INSERT INTO musicians (url,name,email,picture,public) VALUES (%s,%s,%s,%s,%s)"
+		c.execute(query,data)
+		return url
+
+def getUserID(email):
+	with DBconn() as c:
+		query = "SELECT url FROM musicians WHERE email = %s"
+		c.execute(query, (email,))
+		result = c.fetchone()
+		try:
+			return result[0]
+		except TypeError:
+			return None
 
 
 @app.route('/gconnect', methods=['POST'])
@@ -117,10 +141,10 @@ def gconnect():
     login_session['email'] = data['email']
 
     # see if user exists, if it doesn't make a new one
-    # user_id = getUserID(data["email"])
-    # if not user_id:
-    # 	user_id = createUser(login_session)
-    # login_session['user_id'] = user_id
+    user_id = getUserID(data["email"])
+    if not user_id:
+    	user_id = createUser(login_session)
+    login_session['user_id'] = user_id
 
     output = ''
     output += '<h1>Welcome, '
@@ -139,8 +163,8 @@ def fbconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = request.data.decode()
-    print("access token received %s " % access_token)
-
+    # print("access token received %s " % access_token)
+# 
 
     app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
         'web']['app_id']
@@ -151,7 +175,7 @@ def fbconnect():
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     result = result.decode()
-    print(url)
+    # print(url)
     # print(result)
 
 
@@ -189,10 +213,10 @@ def fbconnect():
     login_session['picture'] = data["data"]["url"]
 
     # see if user exists
-    # user_id = getUserID(login_session['email'])
-    # if not user_id:
-    #     user_id = createUser(login_session)
-    # login_session['user_id'] = user_id
+    user_id = getUserID(login_session['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
 
     output = ''
     output += '<h1>Welcome, '
@@ -254,7 +278,7 @@ def disconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
-        # del login_session['user_id']
+        del login_session['user_id']
         del login_session['provider']
         response = "You have successfully been logged out."
     else:

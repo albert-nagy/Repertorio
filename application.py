@@ -16,7 +16,7 @@ import requests
 app = Flask(__name__)
 
 CLIENT_ID = json.loads(
-    open('client_secret_945722933121-lbkncbgj0sht96it5lnmhktbsns74l3s.apps.googleusercontent.com.json', 'r').read())['web']['client_id']
+    open('google_secret.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Repertorio App"
 
 dbname = 'rep_catalog'
@@ -51,7 +51,7 @@ def gconnect():
 
     try:
         # Upgrade the authorization code into a credentials object
-        oauth_flow = flow_from_clientsecrets('client_secret_945722933121-lbkncbgj0sht96it5lnmhktbsns74l3s.apps.googleusercontent.com.json', scope='')
+        oauth_flow = flow_from_clientsecrets('google_secret.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:

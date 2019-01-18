@@ -3,6 +3,14 @@
 {% include "header.html" %}
 <main>
 	<h1>{{ personal_data[0] }}</h1>
-	<img src="{{ personal_data[1] }}">	
+	<img src="{{ personal_data[1] }}">
+	<div class="bio">
+		<h2>Biography</h2>
+		{% if not personal_data[2] %}
+			<p>No biography provided yet..</p>
+		{% else %}
+			<p>{{ personal_data[2] }}</p>
+		{% endif %}
+	</div>
 </main>
 {% endblock %}

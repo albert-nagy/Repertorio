@@ -269,7 +269,7 @@ def showIndex():
 @app.route('/musicians/<musician_id>')
 def showProfile(musician_id):
 	with DBconn() as c:
-		query = """SELECT name, picture, email, public, tel, address
+		query = """SELECT name, picture, bio, email, public, tel, address
 		FROM musicians WHERE url = %s"""
 		c.execute(query, (musician_id,))
 		personal_data = c.fetchone()

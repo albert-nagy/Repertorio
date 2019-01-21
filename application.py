@@ -274,7 +274,7 @@ def showProfile(musician_id):
 		c.execute(query, (musician_id,))
 		personal_data = c.fetchone()
 		return render_template('profile.html', personal_data=personal_data,
-			STATE=makeState(), login_session=login_session)
+			url=musician_id, STATE=makeState(), login_session=login_session)
 
 
 

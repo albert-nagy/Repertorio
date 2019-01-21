@@ -4,13 +4,34 @@
 <main>
 	<h1>{{ personal_data[0] }}</h1>
 	<img src="{{ personal_data[1] }}">
-	<div class="bio">
-		<h2>Biography</h2>
-		{% if not personal_data[2] %}
-			<p>No biography provided yet..</p>
-		{% else %}
-			<p>{{ personal_data[2] }}</p>
-		{% endif %}
-	</div>
+	<section class="userinfo">
+		<div class="bio">
+			<h2>Biography</h2>
+			{% if not personal_data[2] %}
+				<p>No biography provided yet..</p>
+			{% else %}
+				<p>{{ personal_data[2] }}</p>
+			{% endif %}
+		</div>
+		<div class="contact">
+			<h2>Contact info</h2>
+			{% if url == login_session['user_id'] %}
+				<p><strong>Email:</strong> {{ personal_data[3] }}</p>
+				{% if not personal_data[5] %}
+				<p><strong>Phone:</strong> -</p>
+				{% else %}
+				<p><strong>Phone:</strong> {{ personal_data[5] }}</p>
+				{% endif %}
+				{% if not personal_data[6] %}
+				<p><strong>Address:</strong> -</p>
+				{% else %}
+				<p><strong>Phone:</strong> {{ personal_data[6] }}</p>
+				{% endif %}
+			{% endif %}
+		</div>
+	</section>
+
+
+
 </main>
 {% endblock %}

@@ -301,21 +301,27 @@ def createForm():
 
 @app.route('/edit', methods=['POST'])
 def editInfo():
+	action = request.args.get('action')
 	what = request.args.get('what')
-	user = request.args.get('id')
-	# If editing the own info, store new info in DB
-	if user == login_session['user_id']:
-		if what == 'bio':
-			text = request.args.get('text')
-			with DBconn() as c:
-				query = """UPDATE musicians SET bio = %s WHERE url = %s"""
-				c.execute(query, (text,login_session['user_id']))
-				query = """SELECT bio FROM musicians WHERE url = %s"""
-				c.execute(query, (login_session['user_id'],))
-				bio = c.fetchone()
-				if bio[0]:
-					return nl2br(bio[0])
-				return ''
+
+	if what == 'bio':
+		# Edit biography if not cancelling
+		if action != 'cancel':
+			user = request.args.get('id')
+			# If it is the user's own bio, store it in the DB
+			if user == login_session['user_id']:
+				text = request.args.get('text')
+				with DBconn() as c:
+					query = """UPDATE musicians SET bio = %s WHERE url = %s"""
+					c.execute(query, (text,login_session['user_id']))
+		# Replace form with the stored bio 	
+		with DBconn() as c:
+			query = """SELECT bio FROM musicians WHERE url = %s"""
+			c.execute(query, (login_session['user_id'],))
+			bio = c.fetchone()
+			if bio[0]:
+				return nl2br(bio[0])
+			return ''
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'

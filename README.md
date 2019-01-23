@@ -18,7 +18,7 @@ python3 database_setup.py
 Install flask and oauth2client modules, then run application.py to start server.
 
 ```bash
-pip3 install flask oauth2client
+pip3 install flask oauth2client markdown
 
 python3 application.py
 ```

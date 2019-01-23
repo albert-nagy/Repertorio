@@ -7,11 +7,18 @@
 	<section class="userinfo">
 		<div class="bio">
 			<h2>Biography</h2>
-			{% if not personal_data[2] %}
+			<span id="bio">
+			{% if not personal_data[2] and url != login_session['user_id'] %}
 				<p>No biography provided yet..</p>
-			{% else %}
+			{% elif not personal_data[2] and url == login_session['user_id'] %}
+			<button type="submit" class="edit" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Add Bio</button>
+			{% elif personal_data[2] %}
 				<p>{{ personal_data[2] }}</p>
+				{% if url == login_session['user_id'] %}
+				<button type="submit" class="edit" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Edit</button>
+				{% endif %}
 			{% endif %}
+			</span>
 		</div>
 		<div class="contact">
 			<h2>Contact info</h2>

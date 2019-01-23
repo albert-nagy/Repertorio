@@ -23,6 +23,7 @@ APPLICATION_NAME = "Repertorio App"
 
 dbname = 'rep_catalog'
 
+# Database connection for all methods using WITH
 class DBconn:
 	def __enter__(self):
 		self.db = psycopg2.connect(dbname=dbname)
@@ -31,9 +32,10 @@ class DBconn:
 		self.db.commit()
 		self.db.close()
 
+# Show line breaks for new line chars stored in database
 def nl2br(text):
     return markdown(text, extensions=['nl2br'])
-
+# Make nl2br accessible from templates
 app.jinja_env.globals.update(nl2br=nl2br)
 
 def makeState():
@@ -284,6 +286,7 @@ def showProfile(musician_id):
 
 @app.route('/infotoedit', methods=['POST'])
 def createForm():
+	# Fill edit form with stored data
 	what = request.args.get('what')
 	user = request.args.get('id')
 	if user == login_session['user_id']:
@@ -300,9 +303,10 @@ def createForm():
 def editInfo():
 	what = request.args.get('what')
 	user = request.args.get('id')
-	text = request.args.get('text')
+	# If editing the own info, store new info in DB
 	if user == login_session['user_id']:
 		if what == 'bio':
+			text = request.args.get('text')
 			with DBconn() as c:
 				query = """UPDATE musicians SET bio = %s WHERE url = %s"""
 				c.execute(query, (text,login_session['user_id']))

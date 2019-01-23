@@ -13,7 +13,7 @@
 			{% elif not personal_data[2] and url == login_session['user_id'] %}
 			<button type="submit" class="edit" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Add Bio</button>
 			{% elif personal_data[2] %}
-				<p>{{ personal_data[2] }}</p>
+				{{ nl2br(personal_data[2])|safe }}
 				{% if url == login_session['user_id'] %}
 				<button type="submit" class="edit" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Edit</button>
 				{% endif %}

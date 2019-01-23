@@ -23,7 +23,7 @@ function editContent(form, what, id) {
     content = form.elements['edit_bio'].value;
   $.ajax({
       type: 'POST',
-      url: '/edit?what='+what+'&id='+id+'&text='+content,
+      url: '/edit?what='+what+'&id='+id+'&text='+encodeURIComponent(content),
       contentType: 'application/octet-stream; charset=utf-8',
       success: function(result) {
          

@@ -13,6 +13,7 @@ from flask import make_response
 import requests
 
 from slugify import slugify
+from markdown import markdown
 
 app = Flask(__name__)
 
@@ -29,6 +30,11 @@ class DBconn:
 	def __exit__(self, type, value, traceback):
 		self.db.commit()
 		self.db.close()
+
+def nl2br(text):
+    return markdown(text, extensions=['nl2br'])
+
+app.jinja_env.globals.update(nl2br=nl2br)
 
 def makeState():
 	state = ''
@@ -304,7 +310,7 @@ def editInfo():
 				c.execute(query, (login_session['user_id'],))
 				bio = c.fetchone()
 				if bio[0]:
-					return bio[0]
+					return nl2br(bio[0])
 				return ''
 
 if __name__ == '__main__':

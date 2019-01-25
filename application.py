@@ -328,6 +328,25 @@ def editInfo():
 			if bio[0]:
 				return nl2br(bio[0])
 			return ''
+			
+	elif what == 'contact':
+		# Edit contact info if not cancelling
+		if action != 'cancel':
+			user = request.args.get('id')
+			# If it is the user's own info, store it in the DB
+			if user == login_session['user_id']:
+				phone = request.args.get('phone')
+				address = request.args.get('address')
+				with DBconn() as c:
+					query = """UPDATE musicians SET tel = %s, address = %s
+					WHERE url = %s"""
+					c.execute(query, (phone,address,login_session['user_id']))
+		# Replace form with the stored contact info 	
+		with DBconn() as c:
+			query = """SELECT tel,address FROM musicians WHERE url = %s"""
+			c.execute(query, (login_session['user_id'],))
+			contact_info = c.fetchone()
+			return json.dumps(contact_info)
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'

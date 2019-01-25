@@ -298,6 +298,12 @@ def createForm():
 				if bio[0]:
 					return bio[0]
 				return ''
+		elif what == 'contact':
+			with DBconn() as c:
+				query = """SELECT tel,address FROM musicians WHERE url = %s"""
+				c.execute(query, (login_session['user_id'],))
+				contact_info = c.fetchone()
+				return json.dumps(contact_info)
 
 @app.route('/edit', methods=['POST'])
 def editInfo():

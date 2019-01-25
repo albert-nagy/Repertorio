@@ -30,17 +30,42 @@ function editContent(form, what, id) {
 
   function replacePart(what,result,id,form)
     {
+    var text;
     if (what == 'bio')
       {
       if (form == 0)
-         text = `<p>`+result+`</p>
+        text = `<p>`+result+`</p>
           <button type="submit" class="edit" onclick="getForm('bio', '`+id+`');">Edit Bio</button>`;
       else
-        text = `<form id="editform" action="javascript:void(0)" method="post" onsubmit="editContent(this, 'bio', '`+id+`')">
+        text = `<form action="javascript:void(0)" method="post" onsubmit="editContent(this, 'bio', '`+id+`')">
                 <textarea name="edit_bio">`+result+`</textarea>
                 <button type="submit" class="edit">Save</button>
                 <button type="reset" class="cancel" onclick="Cancel('bio','`+id+`')">Cancel</button>
                 </form>`;
+      }
+    else if (what == 'contact')
+      {
+      var contact_info = JSON.parse(result);
+      var phone = (contact_info != null) ? ``:contact_info[0];
+      var address = (contact_info != null) ? ``:contact_info[1];
+      if (form == 1)
+        {
+        text = `<form action="javascript:void(0)" method="post" onsubmit="editContent(this, 'contact', '`+id+`')">
+                <p><label><strong>Phone: </strong><input type="text" name="phone" value="`+phone+`" /></label></p>
+                <p><label><strong>Address: </strong><input type="text" name="phone" value="`+address+`" /></label></p>
+                <button type="submit" class="edit">Save</button>
+                <button type="reset" class="cancel" onclick="Cancel('contact','`+id+`')">Cancel</button>`
+        }
+      else
+        {
+        if (phone == ``)
+          phone = `-`;
+        if (address == ``)
+          address = `-`;
+        text = `<p><strong>Phone: </strong>`+phone+`</p>
+                <p><strong>Address: </strong>`+address+`</p>
+                <button type="submit" class="edit" onclick="getForm('contact','`+id+`');">Edit Contact Info</button>`
+        }
       }
     document.getElementById(what).innerHTML = text;
     }

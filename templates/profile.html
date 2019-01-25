@@ -22,9 +22,9 @@
 		</div>
 		<div class="contact">
 			<h2>Contact info</h2>
-			<span id="contact">
 			{% if url == login_session['user_id'] %}
 				<p><strong>Email:</strong> {{ personal_data[3] }}</p>
+				<span id="contact">
 				{% if not personal_data[5] %}
 				<p><strong>Phone:</strong> -</p>
 				{% else %}
@@ -35,9 +35,9 @@
 				{% else %}
 				<p><strong>Address:</strong> {{ personal_data[6] }}</p>
 				{% endif %}
-				<button type="submit" class="edit" onclick="getForm('contact', '{{ login_session['user_id'] }}');">Edit Contact Info</button>
+				<button type="submit" class="edit" onclick="getForm('contact','{{ login_session['user_id'] }}');">Edit Contact Info</button>
+				</span>
 			{% endif %}
-			</span>
 		</div>
 	</section>
 

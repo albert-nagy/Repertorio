@@ -34,7 +34,7 @@ function editContent(form, what, id) {
       {
       if (form == 0)
          text = `<p>`+result+`</p>
-          <button type="submit" class="edit" onclick="getForm('bio', '`+id+`');">Edit</button>`;
+          <button type="submit" class="edit" onclick="getForm('bio', '`+id+`');">Edit Bio</button>`;
       else
         text = `<form id="editform" action="javascript:void(0)" method="post" onsubmit="editContent(this, 'bio', '`+id+`')">
                 <textarea name="edit_bio">`+result+`</textarea>

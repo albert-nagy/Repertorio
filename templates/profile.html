@@ -11,11 +11,11 @@
 			{% if not personal_data[2] and url != login_session['user_id'] %}
 				<p>No biography provided yet..</p>
 			{% elif not personal_data[2] and url == login_session['user_id'] %}
-			<button type="submit" class="edit" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Add Bio</button>
+			<button type="submit" class="edit" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Edit Bio</button>
 			{% elif personal_data[2] %}
 				{{ nl2br(personal_data[2])|safe }}
 				{% if url == login_session['user_id'] %}
-				<button type="submit" class="edit" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Edit</button>
+				<button type="submit" class="edit" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Edit Bio</button>
 				{% endif %}
 			{% endif %}
 			</span>

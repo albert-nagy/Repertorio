@@ -20,31 +20,45 @@
 			{% endif %}
 			</span>
 		</div>
+		{% if url == login_session['user_id'] %}
 		<div class="contact">
 			<h2>Contact info</h2>
-			{% if url == login_session['user_id'] %}
-				<p><strong>Email:</strong> {{ personal_data[3] }} 
-					{% if personal_data[4] == 0 %}
-					<button id="email_privacy" onclick="editContent(this, 'email_privacy', '{{ login_session['user_id'] }}')">Set Public</button>
-					{% else %}
-					<button id="email_privacy" onclick="editContent(this, 'email_privacy', '{{ login_session['user_id'] }}')">Set Private</button>
-					{% endif %}
-				</p>
-				<span id="contact">
-				{% if not personal_data[5] %}
-				<p><strong>Phone:</strong> -</p>
+			<p><strong>Email:</strong> {{ personal_data[3] }} 
+				{% if personal_data[4] == 0 %}
+				<button id="email_privacy" onclick="editContent(this, 'email_privacy', '{{ login_session['user_id'] }}')">Set Public</button>
 				{% else %}
-				<p><strong>Phone:</strong> {{ personal_data[5] }}</p>
+				<button id="email_privacy" onclick="editContent(this, 'email_privacy', '{{ login_session['user_id'] }}')">Set Private</button>
 				{% endif %}
-				{% if not personal_data[6] %}
-				<p><strong>Address:</strong> -</p>
-				{% else %}
-				<p><strong>Address:</strong> {{ personal_data[6] }}</p>
-				{% endif %}
-				<button class="edit" onclick="getForm('contact','{{ login_session['user_id'] }}');">Edit Contact Info</button>
-				</span>
+			</p>
+			<span id="contact">
+			{% if not personal_data[5] %}
+			<p><strong>Phone:</strong> -</p>
+			{% else %}
+			<p><strong>Phone:</strong> {{ personal_data[5] }}</p>
+			{% endif %}
+			{% if not personal_data[6] %}
+			<p><strong>Address:</strong> -</p>
+			{% else %}
+			<p><strong>Address:</strong> {{ personal_data[6] }}</p>
+			{% endif %}
+			<button class="edit" onclick="getForm('contact','{{ login_session['user_id'] }}');">Edit Contact Info</button>
+			</span>
+		</div>
+		{% elif personal_data[4] == 1 or personal_data[5] or personal_data[6] %}
+		<div class="contact">
+			<h2>Contact info</h2>
+			{% if personal_data[4] == 1 %}
+			<p><strong>Email:</strong> {{ personal_data[3] }}</p>
+			{% endif %}
+			{% if personal_data[5] %}
+			<p><strong>Phone:</strong> {{ personal_data[5] }}</p>
+			{% endif %}
+			{% if personal_data[6] %}
+			<p><strong>Address:</strong> {{ personal_data[6] }}</p>
 			{% endif %}
 		</div>
+		{% endif %}
+		
 	</section>
 	<section class="repertoire">
 		<h2>Repertoire</h2>

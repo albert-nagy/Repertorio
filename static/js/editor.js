@@ -1,3 +1,12 @@
+function authOperation(result)
+  {
+  var response = JSON.parse(result);
+  if (response[0] == 0)
+    window.location.href = page;
+  else if (response[0] == 1)
+    return response[1];
+  } 
+
 function getForm(what, id) {
   $.ajax({
       type: 'POST',
@@ -25,7 +34,7 @@ function editContent(form, what, id) {
   function Cancel(what,id) {
   $.ajax({
       type: 'POST',
-      url: '/edit?action=cancel&what='+what,
+      url: '/edit?action=cancel&what='+what+'&id='+id,
       contentType: 'application/octet-stream; charset=utf-8',
       success: function(result) {replacePart(what,result,id,0);}
   }); 
@@ -33,24 +42,24 @@ function editContent(form, what, id) {
 
   function replacePart(what,result,id,form)
     {
+    var response = authOperation(result);
     var text;
     if (what == 'bio')
       {
       if (form == 0)
-        text = `<p>`+result+`</p>
+        text = `<p>`+response+`</p>
           <button type="submit" class="edit" onclick="getForm('bio', '`+id+`');">Edit Bio</button>`;
       else
         text = `<form action="javascript:void(0)" method="post" onsubmit="editContent(this, 'bio', '`+id+`')">
-                <textarea name="edit_bio">`+result+`</textarea>
+                <textarea name="edit_bio">`+response+`</textarea>
                 <button type="submit" class="edit">Save</button>
                 <button type="reset" class="cancel" onclick="Cancel('bio','`+id+`')">Cancel</button>
                 </form>`;
       }
     else if (what == 'contact')
       {
-      var contact_info = JSON.parse(result);
-      var phone = (contact_info != null) ? contact_info[0]:``;
-      var address = (contact_info != null) ? contact_info[1]:``;
+      var phone = (response[0] != null) ? response[0]:``;
+      var address = (response[1] != null) ? response[1]:``;
       if (form == 1)
         {
         text = `<form action="javascript:void(0)" method="post" onsubmit="editContent(this, 'contact', '`+id+`')">

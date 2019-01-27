@@ -289,64 +289,89 @@ def createForm():
 	# Fill edit form with stored data
 	what = request.args.get('what')
 	user = request.args.get('id')
-	if user == login_session['user_id']:
-		if what == 'bio':
-			with DBconn() as c:
-				query = """SELECT bio FROM musicians WHERE url = %s"""
-				c.execute(query, (login_session['user_id'],))
-				bio = c.fetchone()
-				if bio[0]:
-					return bio[0]
-				return ''
-		elif what == 'contact':
-			with DBconn() as c:
-				query = """SELECT tel,address FROM musicians WHERE url = %s"""
-				c.execute(query, (login_session['user_id'],))
-				contact_info = c.fetchone()
-				return json.dumps(contact_info)
+	result = []
+	# If the user logged in is the owner of the profile, the first part of the
+	# response will be 1, otherwise 0. The second part will contain the data.
+	if 'user_id' in login_session:
+		if user == login_session['user_id']:
+			result.append(1)
+			if what == 'bio':
+				with DBconn() as c:
+					query = """SELECT bio FROM musicians WHERE url = %s"""
+					c.execute(query, (login_session['user_id'],))
+					bio = c.fetchone()
+					if bio[0]:
+						result.append(bio[0])
+					else:
+						result.append('')
+			elif what == 'contact':
+				with DBconn() as c:
+					query = """SELECT tel,address FROM musicians
+					WHERE url = %s"""
+					c.execute(query, (login_session['user_id'],))
+					result.append(c.fetchone())
+		else:
+			result.append(0)
+			flash("You are not authorized to perform this operation!")
+	else:
+		result.append(0)
+		flash("You are not logged in!")
+	return json.dumps(result)
 
 @app.route('/edit', methods=['POST'])
 def editInfo():
 	action = request.args.get('action')
 	what = request.args.get('what')
+	user = request.args.get('id')
+	result = []
+	# If the user logged in is the owner of the profile, the first part of the
+	# response will be 1, otherwise 0. The second part will contain the data.
+	if 'user_id' in login_session:
+		if user == login_session['user_id']:
+			result.append(1)
+			if what == 'bio':
+				# Edit biography if not cancelling
+				if action != 'cancel':
+					# If it is the user's own bio, store it in the DB
+					text = request.args.get('text')
+					with DBconn() as c:
+						query = """UPDATE musicians SET bio = %s WHERE url = %s"""
+						c.execute(query, (text,login_session['user_id']))
 
-	if what == 'bio':
-		# Edit biography if not cancelling
-		if action != 'cancel':
-			user = request.args.get('id')
-			# If it is the user's own bio, store it in the DB
-			if user == login_session['user_id']:
-				text = request.args.get('text')
+				# Replace form with the stored bio 	
 				with DBconn() as c:
-					query = """UPDATE musicians SET bio = %s WHERE url = %s"""
-					c.execute(query, (text,login_session['user_id']))
-		# Replace form with the stored bio 	
-		with DBconn() as c:
-			query = """SELECT bio FROM musicians WHERE url = %s"""
-			c.execute(query, (login_session['user_id'],))
-			bio = c.fetchone()
-			if bio[0]:
-				return nl2br(bio[0])
-			return ''
-			
-	elif what == 'contact':
-		# Edit contact info if not cancelling
-		if action != 'cancel':
-			user = request.args.get('id')
-			# If it is the user's own info, store it in the DB
-			if user == login_session['user_id']:
-				phone = request.args.get('phone')
-				address = request.args.get('address')
+					query = """SELECT bio FROM musicians WHERE url = %s"""
+					c.execute(query, (login_session['user_id'],))
+					bio = c.fetchone()
+					if bio[0]:
+						result.append(nl2br(bio[0]))
+					else:
+						result.append('')
+
+			elif what == 'contact':
+				if action != 'cancel':
+					# Edit contact info if not cancelling
+					# If it is the user's own info, store it in the DB
+					phone = request.args.get('phone')
+					address = request.args.get('address')
+					with DBconn() as c:
+						query = """UPDATE musicians SET tel = %s, address = %s
+						WHERE url = %s"""
+						c.execute(query, (phone,address,login_session['user_id']))
+
+				# Replace form with the stored contact info 	
 				with DBconn() as c:
-					query = """UPDATE musicians SET tel = %s, address = %s
-					WHERE url = %s"""
-					c.execute(query, (phone,address,login_session['user_id']))
-		# Replace form with the stored contact info 	
-		with DBconn() as c:
-			query = """SELECT tel,address FROM musicians WHERE url = %s"""
-			c.execute(query, (login_session['user_id'],))
-			contact_info = c.fetchone()
-			return json.dumps(contact_info)
+					query = """SELECT tel,address FROM musicians WHERE url = %s"""
+					c.execute(query, (login_session['user_id'],))
+					result.append(c.fetchone())
+				
+		else:
+			result.append(0)
+			flash("You are not authorized to perform this operation!")
+	else:
+		result.append(0)
+		flash("You are not logged in!")
+	return json.dumps(result)
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'

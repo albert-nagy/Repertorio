@@ -357,13 +357,34 @@ def editInfo():
 					with DBconn() as c:
 						query = """UPDATE musicians SET tel = %s, address = %s
 						WHERE url = %s"""
-						c.execute(query, (phone,address,login_session['user_id']))
+						c.execute(query,
+							(phone,address,login_session['user_id']))
 
 				# Replace form with the stored contact info 	
 				with DBconn() as c:
-					query = """SELECT tel,address FROM musicians WHERE url = %s"""
+					query = """SELECT tel,address FROM musicians
+					WHERE url = %s"""
 					c.execute(query, (login_session['user_id'],))
 					result.append(c.fetchone())
+
+			elif what == 'email_privacy':
+				with DBconn() as c:
+					# Check if email address is public
+					query = """SELECT public FROM musicians WHERE url = %s"""
+					c.execute(query, (login_session['user_id'],))
+					if c.fetchone()[0] == 0:
+						# If private, set it public and change button text
+						public = 1
+						button_text = "Set Private"
+					else:
+						# If public, set it private and change button text
+						public = 0
+						button_text = "Set Public"
+					query = """UPDATE musicians SET public = %s
+					WHERE url = %s"""
+					# Update email privacy in DB and return new button text
+					c.execute(query, (public,login_session['user_id']))
+					result.append(button_text)
 				
 		else:
 			result.append(0)

@@ -21,8 +21,10 @@ function editContent(form, what, id) {
   var content;
   if (what == 'bio')
     content = '&text='+encodeURIComponent(form.elements['edit_bio'].value);
-  if (what == 'contact')
+  else if (what == 'contact')
     content = '&phone='+encodeURIComponent(form.elements['phone'].value)+'&address='+encodeURIComponent(form.elements['address'].value);
+  else if (what == 'email_privacy')
+    content = '';
   $.ajax({
       type: 'POST',
       url: '/edit?action=edit&what='+what+'&id='+id+content,
@@ -79,5 +81,7 @@ function editContent(form, what, id) {
                 <button type="submit" class="edit" onclick="getForm('contact','`+id+`');">Edit Contact Info</button>`
         }
       }
+    else if (what == 'email_privacy')
+      text = response;
     document.getElementById(what).innerHTML = text;
     }

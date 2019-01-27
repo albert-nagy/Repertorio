@@ -11,11 +11,11 @@
 			{% if not personal_data[2] and url != login_session['user_id'] %}
 				<p>No biography provided yet..</p>
 			{% elif not personal_data[2] and url == login_session['user_id'] %}
-			<button type="submit" class="edit" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Edit Bio</button>
+			<button class="edit" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Edit Bio</button>
 			{% elif personal_data[2] %}
 				{{ nl2br(personal_data[2])|safe }}
 				{% if url == login_session['user_id'] %}
-				<button type="submit" class="edit" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Edit Bio</button>
+				<button class="edit" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Edit Bio</button>
 				{% endif %}
 			{% endif %}
 			</span>
@@ -41,10 +41,20 @@
 				{% else %}
 				<p><strong>Address:</strong> {{ personal_data[6] }}</p>
 				{% endif %}
-				<button type="submit" class="edit" onclick="getForm('contact','{{ login_session['user_id'] }}');">Edit Contact Info</button>
+				<button class="edit" onclick="getForm('contact','{{ login_session['user_id'] }}');">Edit Contact Info</button>
 				</span>
 			{% endif %}
 		</div>
+	</section>
+	<section class="repertoire">
+		<h2>Repertoire</h2>
+		<span id="repertoire">
+			{% if url == login_session['user_id'] %}
+			<span id="add_work">
+				<button class="add" onclick="getForm('add_work','{{ login_session['user_id'] }}');">+ Add Work to your Repertoire</button>
+			</span>
+			{% endif %}
+		</span>
 	</section>
 
 

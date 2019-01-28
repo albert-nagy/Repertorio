@@ -289,46 +289,46 @@ def createForm():
 	# Fill edit form with stored data
 	what = request.args.get('what')
 	user = request.args.get('id')
-	result = []
+	response = []
 	# If the user logged in is the owner of the profile, the first part of the
 	# response will be 1, otherwise 0. The second part will contain the data.
 	if 'user_id' in login_session:
 		if user == login_session['user_id']:
-			result.append(1)
+			response.append(1)
 			if what == 'bio':
 				with DBconn() as c:
 					query = """SELECT bio FROM musicians WHERE url = %s"""
 					c.execute(query, (login_session['user_id'],))
 					bio = c.fetchone()
 					if bio[0]:
-						result.append(bio[0])
+						response.append(bio[0])
 					else:
-						result.append('')
+						response.append('')
 			elif what == 'contact':
 				with DBconn() as c:
 					query = """SELECT tel,address FROM musicians
 					WHERE url = %s"""
 					c.execute(query, (login_session['user_id'],))
-					result.append(c.fetchone())
+					response.append(c.fetchone())
 		else:
-			result.append(0)
+			response.append(0)
 			flash("You are not authorized to perform this operation!")
 	else:
-		result.append(0)
+		response.append(0)
 		flash("You are not logged in!")
-	return json.dumps(result)
+	return json.dumps(response)
 
 @app.route('/edit', methods=['POST'])
 def editInfo():
 	action = request.args.get('action')
 	what = request.args.get('what')
 	user = request.args.get('id')
-	result = []
+	response = []
 	# If the user logged in is the owner of the profile, the first part of the
 	# response will be 1, otherwise 0. The second part will contain the data.
 	if 'user_id' in login_session:
 		if user == login_session['user_id']:
-			result.append(1)
+			response.append(1)
 			if what == 'bio':
 				# Edit biography if not cancelling
 				if action != 'cancel':
@@ -344,9 +344,9 @@ def editInfo():
 					c.execute(query, (login_session['user_id'],))
 					bio = c.fetchone()
 					if bio[0]:
-						result.append(nl2br(bio[0]))
+						response.append(nl2br(bio[0]))
 					else:
-						result.append('')
+						response.append('')
 
 			elif what == 'contact':
 				if action != 'cancel':
@@ -365,7 +365,7 @@ def editInfo():
 					query = """SELECT tel,address FROM musicians
 					WHERE url = %s"""
 					c.execute(query, (login_session['user_id'],))
-					result.append(c.fetchone())
+					response.append(c.fetchone())
 
 			elif what == 'email_privacy':
 				with DBconn() as c:
@@ -384,15 +384,15 @@ def editInfo():
 					WHERE url = %s"""
 					# Update email privacy in DB and return new button text
 					c.execute(query, (public,login_session['user_id']))
-					result.append(button_text)
+					response.append(button_text)
 				
 		else:
-			result.append(0)
+			response.append(0)
 			flash("You are not authorized to perform this operation!")
 	else:
-		result.append(0)
+		response.append(0)
 		flash("You are not logged in!")
-	return json.dumps(result)
+	return json.dumps(response)
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'

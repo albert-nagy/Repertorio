@@ -27,7 +27,7 @@ function signInCallback(authResult) {
       success: function(result) {
         // Handle or verify the server response if necessary.
          if (result) 
-        	window.location.href = page;
+        	window.location.href = result;
         else 
       		alert('Login failed');
       }
@@ -73,7 +73,7 @@ function signInCallback(authResult) {
       success: function(result) {
         // Handle or verify the server response if necessary.
         if (result)
-        	window.location.href = page;
+        	window.location.href = result;
         else
       		alert('Login failed');
       }

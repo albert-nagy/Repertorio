@@ -156,7 +156,7 @@ def gconnect():
 
     output = "you are now logged in as {}".format(login_session['username'])
     flash(output)
-    return output
+    return url_for('showProfile', musician_id=login_session['user_id'])
 
 @app.route('/fbconnect', methods=['POST'])
 def fbconnect():
@@ -210,7 +210,7 @@ def fbconnect():
 
     output = "Now logged in as {}".format(login_session['username'])
     flash(output)
-    return output
+    return url_for('showProfile', musician_id=login_session['user_id'])
 
 app.route('/gdisconnect')
 def gdisconnect():

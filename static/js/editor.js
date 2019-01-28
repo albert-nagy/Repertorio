@@ -68,7 +68,8 @@ function editContent(form, what, id) {
                 <p><label><strong>Phone: </strong><input type="text" name="phone" value="`+phone+`" /></label></p>
                 <p><label><strong>Address: </strong><input type="text" name="address" value="`+address+`" /></label></p>
                 <button type="submit" class="edit">Save</button>
-                <button type="reset" class="cancel" onclick="Cancel('contact','`+id+`')">Cancel</button>`
+                <button type="reset" class="cancel" onclick="Cancel('contact','`+id+`')">Cancel</button>
+                </form>`;
         }
       else
         {
@@ -83,5 +84,18 @@ function editContent(form, what, id) {
       }
     else if (what == 'email_privacy')
       text = response;
+    else if (what == 'add_work')
+      {
+      text = `<form action="javascript:void(0)" method="post" onsubmit="editContent(this, 'add_work', '`+id+`')">
+                <p><label><strong>Composer name: </strong><input type="text" name="composer" value="" /></label>
+                <label> <strong>Title: </strong><input type="text" name="title" value="" /></label> 
+                <label><strong>Duration: </strong><input type="text" name="duration" value="" /> min</label></p>
+                <p><label><strong>Instrument: </strong><select id="instrument">
+                `+ response[0] +`</select></label> 
+                <label>`+ response[1] +`</label></p>
+                <button type="submit" class="edit">Save</button>
+                <button type="reset" class="cancel" onclick="Cancel('add_work','`+id+`')">Cancel</button>
+                </form>`;
+      }
     document.getElementById(what).innerHTML = text;
     }

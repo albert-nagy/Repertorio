@@ -310,6 +310,46 @@ def createForm():
 					WHERE url = %s"""
 					c.execute(query, (login_session['user_id'],))
 					response.append(c.fetchone())
+			elif what == 'add_work':
+			# Let's create the form to add new works to the repertoire!
+			# Search data for the form
+				with DBconn() as c:
+					options = []
+					instruments = ''
+					categories = ''
+					# Get options for selects: first get all instruments
+					#and create <option> tags
+					query = "SELECT url, name FROM instruments ORDER BY rank"
+					c.execute(query)
+					for instrument in c.fetchall():
+						instruments += '<option value="{}">{}</option>\n'.format(
+							instrument[0],instrument[1])
+					# Put the instrument <option> tags into the options list						
+					options.append(instruments)
+					# Then get all categories created by the user
+					query = """SELECT id, name FROM categories
+					WHERE creator = %s"""
+					c.execute(query, (login_session['user_id'],))
+					result = c.fetchall()
+					# If no such category found, create input field for a new one
+					if len(result) == 0:
+						categories = '''<strong>Create Category: </strong>
+						<input type="text" name="category"
+						id="category" value="" />'''
+					else:
+					# If there are lready categories created by the user,
+					# create a select for them
+						categories = '''<strong>Category: </strong>
+						<select id="category">\n'''
+						for category in c.fetchall():
+							categories += '''<option value="{}">{}</option>
+							\n'''.format(category[0],category[1])
+						categories += '''</select>'''
+					# Put the category input or select into the options list	
+					options.append(categories)
+					# Then append this list to the response list
+					#for the final JSON output
+					response.append(options)
 		else:
 			response.append(0)
 			flash("You are not authorized to perform this operation!")

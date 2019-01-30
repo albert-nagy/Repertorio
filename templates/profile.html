@@ -68,6 +68,36 @@
 				<button class="add" onclick="getForm('add_work','{{ login_session['user_id'] }}');">+ Add Work to your Repertoire</button>
 			</span>
 			{% endif %}
+				{% set i = 0 %}
+				{% set instruments = [] %}
+				{% set categories = [] %}
+				{% for work in works %}
+					{# Start with the instrument name (there may be more instruments) #}
+					{% if work[4] not in instruments %}
+						<h3>{{work[4]}}</h3>
+						{% do instruments.append(work[4]) %}
+						{% set categories = [] %}
+					{% endif %}
+					{# Start a new category #}
+					{% if work[5] not in categories %}
+						{# If this is not the first category, close the previous one first #}
+						{% if i != 0 %}
+							</div>
+						{% endif %}
+						{# Over the half of all works start a new column #}
+						{% if i <= works|length/2 %}
+							<div class="category">
+						{% else %}
+							<div class="category right">
+						{% endif %}
+						<h4>{{work[5]}}</h4>
+						{% do categories.append(work[5]) %}
+					{% endif %}
+					<p class="work"><strong>{{work[1]}}:</strong> {{work[2]}} {{work[3]}}'</p>
+					{% set i = i + 1 %}
+				{% endfor %}
+				{# Close the last category #}
+				</div>
 		</span>
 	</section>
 

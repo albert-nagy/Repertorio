@@ -16,6 +16,8 @@ from slugify import slugify
 from markdown import markdown
 
 app = Flask(__name__)
+# Load Jinja's "do" extension for operations in templates - like list.append()
+app.jinja_env.add_extension('jinja2.ext.do')
 
 CLIENT_ID = json.loads(
     open('google_secret.json', 'r').read())['web']['client_id']
@@ -281,8 +283,15 @@ def showProfile(musician_id):
 		FROM musicians WHERE url = %s"""
 		c.execute(query, (musician_id,))
 		personal_data = c.fetchone()
+		query = '''SELECT w.id, w.composer, w.title, w.duration,
+				i.name, c.name FROM works w, instruments i, categories c
+				WHERE w.creator = %s AND i.url = w.instrument AND c.id = w.category
+				ORDER BY i.url, c.id, w.composer, w.title'''
+		c.execute(query, (musician_id,))
+		works = c.fetchall()
 		return render_template('profile.html', personal_data=personal_data,
-			url=musician_id, STATE=makeState(), login_session=login_session)
+			works = works, url=musician_id, STATE=makeState(),
+			login_session=login_session)
 
 @app.route('/infotoedit', methods=['POST'])
 def createForm():

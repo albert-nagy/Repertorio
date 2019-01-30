@@ -334,14 +334,13 @@ def createForm():
 					# If no such category found, create input field for a new one
 					if len(result) == 0:
 						categories = '''<strong>Create Category: </strong>
-						<input type="text" name="category"
-						id="category" value="" />'''
+						<input type="text" name="category" value="" />'''
 					else:
 					# If there are lready categories created by the user,
 					# create a select for them
 						categories = '''<strong>Category: </strong>
 						<select id="category">\n'''
-						for category in c.fetchall():
+						for category in result:
 							categories += '''<option value="{}">{}</option>
 							\n'''.format(category[0],category[1])
 						categories += '''</select>'''
@@ -433,6 +432,114 @@ def editInfo():
 		response.append(0)
 		flash("You are not logged in!")
 	return json.dumps(response)
+
+@app.route('/add_work', methods=['POST'])
+def addWork():
+	composer = request.args.get('composer')
+	title = request.args.get('title')
+	duration = request.args.get('duration')
+	instrument = request.args.get('instrument')
+	category = request.args.get('category')
+	user = request.args.get('id')
+	response = []
+	# If the user logged in is the owner of the profile, the first part of the
+	# response will be 1, otherwise 0. The second part will contain the data.
+	if 'user_id' in login_session:
+		if user == login_session['user_id']:
+			response.append(1)
+			with DBconn() as c:
+				# Check if instrument exists or new instrument should be added
+				# If it already exists, the argument 'instrument' will be the
+				# slugified name and the next query will find it
+				query='SELECT COUNT(*) FROM instruments WHERE url = %s'
+				c.execute(query, (instrument,))
+				num = c.fetchone()[0]
+				if num == 0:
+					# If the instrument is not found in the DB, create a new
+					# entry for it. In this case the argument 'instrument' is
+					# a normal name. We have to slugify it for the instrument id
+					# and assign a rank to it
+					query='SELECT MAX(rank) FROM instruments'
+					c.execute(query)
+					rank = c.fetchone()[0] + 1
+					query='''INSERT INTO instruments (url,name,rank)
+					VALUES (%s,%s,%s)'''
+					url = slugify(instrument)
+					c.execute(query, (url,instrument,rank))
+				else:
+					# If found, use the instrument variable as instrument id for
+					# further queries
+					url = instrument
+				# If the category variable is numeric, it is already in the DB,
+				# the variable contains the category ID.
+				# If not, create a new category in the database.
+				if not category.isnumeric():
+					query='''INSERT INTO categories (name,creator)
+					VALUES (%s,%s)'''
+					c.execute(query, (category,user))
+					# After inserting, use the ID of the new record as category ID
+					query='SELECT id FROM categories WHERE name = %s'
+					c.execute(query, (category,))
+					category = c.fetchone()[0]
+				# Then create the new Work entry using all data.
+				query='''INSERT INTO 
+				works (composer,title,duration,instrument,creator,category)
+				VALUES (%s,%s,%s,%s,%s,%s)'''
+				c.execute(query, (composer,title,duration,url,user,category))
+				# Finally generate the repertoire list with the new element
+				query = '''SELECT w.id, w.composer, w.title, w.duration,
+				i.name, c.name FROM works w, instruments i, categories c
+				WHERE w.creator = %s AND i.url = w.instrument AND c.id = w.category
+				ORDER BY i.url, c.id, w.composer, w.title'''
+				c.execute(query, (user,))
+				works = c.fetchall()
+				instruments = set()
+				text = '''<span id="add_work">
+				<button class="add" onclick="getForm('add_work','{}');">
+				+ Add Work to your Repertoire</button>
+				</span>'''.format(user)
+				i = 0
+				for work in works:
+					# Start with the instrument name 
+					# (there may be more instruments)
+					if work[4] not in instruments:
+						text += '''
+						<h3>{}</h3>'''.format(work[4])
+						instruments.add(work[4])
+						categories = set()
+					# Start a new category
+					if work[5] not in categories:
+						# If this is not the first category, close the
+						# previous one first
+						if i != 0:
+							text += '''
+							</div>'''
+						# Over the half of all work start a new column
+						if i <= len(works)/2:
+							text += '''
+							<div class="category">'''
+						else:
+							text += '''
+							<div class="category right">'''
+						text += '''
+						<h4>{}</h4>'''.format(work[5])
+						categories.add(work[5])
+					text += '''
+					<p class="work"><strong>{}:</strong> {} {}'</p>'''.format(
+						work[1],work[2],work[3])
+					i += 1
+				# Close the last category
+				text += '''
+				</div>'''
+				response.append(text)
+		else:
+			response.append(0)
+			flash("You are not authorized to perform this operation!")
+	else:
+		response.append(0)
+		flash("You are not logged in!")
+	return json.dumps(response)
+
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'

@@ -1,3 +1,5 @@
+var select;
+
 function authOperation(result)
   {
   var response = JSON.parse(result);
@@ -25,6 +27,7 @@ function editContent(form, what, id) {
     content = '&phone='+encodeURIComponent(form.elements['phone'].value)+'&address='+encodeURIComponent(form.elements['address'].value);
   else if (what == 'email_privacy')
     content = '';
+
   $.ajax({
       type: 'POST',
       url: '/edit?action=edit&what='+what+'&id='+id+content,
@@ -42,9 +45,42 @@ function editContent(form, what, id) {
   }); 
   }
 
+  function addWork(form,id)
+    {
+    var composer = form.elements['composer'].value.trim();
+    var title = form.elements['title'].value.trim();
+    var duration = form.elements['duration'].value.trim();
+    var category;
+    if (document.getElementById('category'))
+      {
+      var select = document.getElementById('category');
+      category = encodeURIComponent(select.options[select.selectedIndex].value);
+      }
+    else
+      category = encodeURIComponent(form.elements['category'].value.trim());
+    var instrument;
+    if (document.getElementById('instrument'))
+      {
+      var select = document.getElementById('instrument');
+      instrument = encodeURIComponent(select.options[select.selectedIndex].value);
+      }
+    else
+      instrument = encodeURIComponent(form.elements['instrument'].value.trim());
+    var content = '&composer='+encodeURIComponent(composer)+'&title='+encodeURIComponent(title)+'&duration='+duration+
+      '&category='+category+'&instrument='+instrument;    
+
+    $.ajax({
+      type: 'POST',
+      url: '/add_work?id='+id+content,
+      contentType: 'application/octet-stream; charset=utf-8',
+      success: function(result) {replacePart('repertoire',result,id,0);}
+    });
+    }
+
   function replacePart(what,result,id,form)
     {
-    var response = authOperation(result);
+    if (what != 'cat_selector')
+      var response = authOperation(result);
     var text;
     if (what == 'bio')
       {
@@ -85,17 +121,30 @@ function editContent(form, what, id) {
     else if (what == 'email_privacy')
       text = response;
     else if (what == 'add_work')
-      {
-      text = `<form action="javascript:void(0)" method="post" onsubmit="editContent(this, 'add_work', '`+id+`')">
+      text = `<form action="javascript:void(0)" method="post" onsubmit="addWork(this, '`+id+`')">
                 <p><label><strong>Composer name: </strong><input type="text" name="composer" value="" /></label>
                 <label> <strong>Title: </strong><input type="text" name="title" value="" /></label> 
                 <label><strong>Duration: </strong><input type="text" name="duration" value="" /> min</label></p>
                 <p><label><strong>Instrument: </strong><select id="instrument">
                 `+ response[0] +`</select></label> 
-                <label>`+ response[1] +`</label></p>
+                <label id="cat_selector">`+ response[1] +` <button type="button" onclick="replacePart('cat_selector',0,0,0)">+ New category</button></label></p>
                 <button type="submit" class="edit">Save</button>
                 <button type="reset" class="cancel" onclick="Cancel('add_work','`+id+`')">Cancel</button>
                 </form>`;
-      }
+      else if (what == 'repertoire')
+        text = response;
+      else if (what == 'cat_selector')
+        {
+          if (result == 0)
+          {
+          select = document.getElementById('cat_selector').innerHTML;
+          text = `<strong>Create Category: </strong>
+            <input type="text" name="category" value="" /> 
+            <button type="button" onclick="replacePart('cat_selector',1,0,0)">Select an existing category instead</button>`; 
+          }
+          else
+            text = select;
+        }
+
     document.getElementById(what).innerHTML = text;
     }

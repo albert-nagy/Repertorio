@@ -72,6 +72,14 @@ def getUserID(email):
 		except TypeError:
 			return None
 
+def listRepertoire(c,musician_id):
+	query = '''SELECT w.id, w.composer, w.title, w.duration,
+	i.name, c.name FROM works w, instruments i, categories c
+	WHERE w.creator = %s AND i.url = w.instrument AND c.id = w.category
+	ORDER BY i.url, c.id, w.composer, w.title'''
+	c.execute(query, (musician_id,))
+	return c.fetchall()
+
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
@@ -283,12 +291,7 @@ def showProfile(musician_id):
 		FROM musicians WHERE url = %s"""
 		c.execute(query, (musician_id,))
 		personal_data = c.fetchone()
-		query = '''SELECT w.id, w.composer, w.title, w.duration,
-				i.name, c.name FROM works w, instruments i, categories c
-				WHERE w.creator = %s AND i.url = w.instrument AND c.id = w.category
-				ORDER BY i.url, c.id, w.composer, w.title'''
-		c.execute(query, (musician_id,))
-		works = c.fetchall()
+		works = listRepertoire(c,musician_id)
 		return render_template('profile.html', personal_data=personal_data,
 			works = works, url=musician_id, STATE=makeState(),
 			login_session=login_session)
@@ -496,12 +499,7 @@ def addWork():
 				VALUES (%s,%s,%s,%s,%s,%s)'''
 				c.execute(query, (composer,title,duration,url,user,category))
 				# Finally generate the repertoire list with the new element
-				query = '''SELECT w.id, w.composer, w.title, w.duration,
-				i.name, c.name FROM works w, instruments i, categories c
-				WHERE w.creator = %s AND i.url = w.instrument AND c.id = w.category
-				ORDER BY i.url, c.id, w.composer, w.title'''
-				c.execute(query, (user,))
-				works = c.fetchall()
+				works = listRepertoire(c,user)
 				html_text = render_template('repertoire.html', works = works,
 					url=user, login_session=login_session)
 				response.append(html_text)

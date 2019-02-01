@@ -1,7 +1,7 @@
 import psycopg2
-from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
+from flask import Flask, render_template, request, redirect, jsonify
+from flask import url_for, flash, session as login_session
 
-from flask import session as login_session
 import random
 import string
 
@@ -502,45 +502,9 @@ def addWork():
 				ORDER BY i.url, c.id, w.composer, w.title'''
 				c.execute(query, (user,))
 				works = c.fetchall()
-				instruments = set()
-				text = '''<span id="add_work">
-				<button class="add" onclick="getForm('add_work','{}');">
-				+ Add Work to your Repertoire</button>
-				</span>'''.format(user)
-				i = 0
-				for work in works:
-					# Start with the instrument name 
-					# (there may be more instruments)
-					if work[4] not in instruments:
-						text += '''
-						<h3>{}</h3>'''.format(work[4])
-						instruments.add(work[4])
-						categories = set()
-					# Start a new category
-					if work[5] not in categories:
-						# If this is not the first category, close the
-						# previous one first
-						if i != 0:
-							text += '''
-							</div>'''
-						# Over the half of all work start a new column
-						if i <= len(works)/2:
-							text += '''
-							<div class="category">'''
-						else:
-							text += '''
-							<div class="category right">'''
-						text += '''
-						<h4>{}</h4>'''.format(work[5])
-						categories.add(work[5])
-					text += '''
-					<p class="work"><strong>{}:</strong> {} {}'</p>'''.format(
-						work[1],work[2],work[3])
-					i += 1
-				# Close the last category
-				text += '''
-				</div>'''
-				response.append(text)
+				html_text = render_template('repertoire.html', works = works,
+					url=user, login_session=login_session)
+				response.append(html_text)
 		else:
 			response.append(0)
 			flash("You are not authorized to perform this operation!")

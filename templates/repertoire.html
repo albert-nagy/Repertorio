@@ -11,7 +11,6 @@
 					{% if work[4] not in instruments %}
 						<h3>{{work[4]}}</h3>
 						{% do instruments.append(work[4]) %}
-						{% set categories = [] %}
 					{% endif %}
 					{# Start a new category #}
 					{% if work[5] not in categories %}

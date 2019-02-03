@@ -78,8 +78,12 @@ def listRepertoire(c,musician_id):
 	WHERE w.creator = %s AND i.url = w.instrument AND c.id = w.category
 	ORDER BY i.url, c.id, w.composer, w.title'''
 	c.execute(query, (musician_id,))
-	return c.fetchall()
-
+	repertoire = c.fetchall()
+	# Get the instruments from the works in the musician's repertoire list
+	# and join them in a comma separated string.
+	instruments = ', '.join({r[4] for r in repertoire})
+	# The result will be a tuple:
+	return (instruments,repertoire)
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
@@ -287,14 +291,16 @@ def showIndex():
 @app.route('/musicians/<musician_id>')
 def showProfile(musician_id):
 	with DBconn() as c:
+		# Get profile data for the selected musician
 		query = """SELECT name, picture, bio, email, public, tel, address
 		FROM musicians WHERE url = %s"""
 		c.execute(query, (musician_id,))
 		personal_data = c.fetchone()
+		# Get the repertoire list
 		works = listRepertoire(c,musician_id)
 		return render_template('profile.html', personal_data=personal_data,
-			works = works, url=musician_id, STATE=makeState(),
-			login_session=login_session)
+		instruments=works[0], works = works[1], url=musician_id,
+		STATE=makeState(), login_session=login_session)
 
 @app.route('/infotoedit', methods=['POST'])
 def createForm():
@@ -500,7 +506,7 @@ def addWork():
 				c.execute(query, (composer,title,duration,url,user,category))
 				# Finally generate the repertoire list with the new element
 				works = listRepertoire(c,user)
-				html_text = render_template('repertoire.html', works = works,
+				html_text = render_template('repertoire.html', works = works[1],
 					url=user, login_session=login_session)
 				response.append(html_text)
 		else:

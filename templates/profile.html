@@ -2,7 +2,8 @@
 {% block content %}
 {% include "header.html" %}
 <main>
-	<h1>{{ personal_data[0] }}</h1>
+	<h1>{{ personal_data[0] }}<br />
+	<span id="instruments">{{ instruments }}</span></h1>
 	<img src="{{ personal_data[1] }}">
 	<section class="userinfo">
 		<div class="bio">

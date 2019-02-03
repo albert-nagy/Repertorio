@@ -121,7 +121,9 @@ function editContent(form, what, id) {
     else if (what == 'email_privacy')
       text = response;
     else if (what == 'add_work')
-      text = `<form action="javascript:void(0)" method="post" onsubmit="addWork(this, '`+id+`')">
+      {
+      if (form == 1)
+        text = `<form action="javascript:void(0)" method="post" onsubmit="addWork(this, '`+id+`')">
                 <p><label><strong>Composer name: </strong><input type="text" name="composer" value="" /></label>
                 <label> <strong>Title: </strong><input type="text" name="title" value="" /></label> 
                 <label><strong>Duration: </strong><input type="text" name="duration" value="" /> min</label></p>
@@ -129,8 +131,11 @@ function editContent(form, what, id) {
                 `+ response[0] +`</select></label> 
                 <label id="cat_selector">`+ response[1] +` <button type="button" onclick="replacePart('cat_selector',0,0,0)">+ New category</button></label></p>
                 <button type="submit" class="edit">Save</button>
-                <button type="reset" class="cancel" onclick="Cancel('add_work','`+id+`')">Cancel</button>
+                <button type="reset" class="cancel" onclick="replacePart('add_work',0,'`+id+`',0)">Cancel</button>
                 </form>`;
+        else
+          text = `<button class="add" onclick="getForm('add_work','`+id+`');">+ Add Work to your Repertoire</button>`;
+        }
       else if (what == 'repertoire')
         text = response;
       else if (what == 'cat_selector')

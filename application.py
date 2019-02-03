@@ -522,7 +522,8 @@ def addWork():
 				works = listRepertoire(c,user)
 				html_text = render_template('repertoire.html', works = works[1],
 					url=user, login_session=login_session)
-				response.append(html_text)
+				response_data = (works[0],html_text)
+				response.append(response_data)
 		else:
 			response.append(0)
 			flash("You are not authorized to perform this operation!")

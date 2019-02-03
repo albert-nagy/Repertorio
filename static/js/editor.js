@@ -137,7 +137,10 @@ function editContent(form, what, id) {
           text = `<button class="add" onclick="getForm('add_work','`+id+`');">+ Add Work to your Repertoire</button>`;
         }
       else if (what == 'repertoire')
-        text = response;
+        {
+        document.getElementById('instruments').innerHTML = response[0]; 
+        text = response[1];
+        }
       else if (what == 'cat_selector')
         {
           if (result == 0)

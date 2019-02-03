@@ -298,6 +298,8 @@ def showProfile(musician_id):
 		personal_data = c.fetchone()
 		# Get the repertoire list
 		works = listRepertoire(c,musician_id)
+		# works is a tuple. Te first element is the instrument list (string),
+		# the second one is the repertoire list
 		return render_template('profile.html', personal_data=personal_data,
 		instruments=works[0], works = works[1], url=musician_id,
 		STATE=makeState(), login_session=login_session)
@@ -335,13 +337,25 @@ def createForm():
 					options = []
 					instruments = ''
 					categories = ''
+					query = """SELECT i.url, COUNT(*) AS num
+					FROM instruments i, works w, musicians m
+					WHERE  m.url = %s AND m.url = w.creator
+					AND w.instrument = i.url
+					GROUP BY i.url
+					ORDER BY num DESC"""
+					c.execute(query, (login_session['user_id'],))
+					main_instrument = c.fetchone()
 					# Get options for selects: first get all instruments
 					#and create <option> tags
 					query = "SELECT url, name FROM instruments ORDER BY rank"
 					c.execute(query)
 					for instrument in c.fetchall():
-						instruments += '<option value="{}">{}</option>\n'.format(
-							instrument[0],instrument[1])
+						if instrument[0] == main_instrument[0]:
+							selected = ' selected="selected"'
+						else:
+							selected = ''
+						instruments+='<option value="{}"{}>{}</option>\n'.format(
+							instrument[0],selected,instrument[1])
 					# Put the instrument <option> tags into the options list						
 					options.append(instruments)
 					# Then get all categories created by the user

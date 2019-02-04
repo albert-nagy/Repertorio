@@ -176,3 +176,17 @@ function editContent(form, what, id) {
 
     document.getElementById(what).innerHTML = text;
     }
+
+function delWork(work,id)
+ {
+  if (confirm("Are you sure to delete this work"))
+  {
+  $.ajax({
+        type: 'POST',
+        url: '/del_work?id='+id+'&work='+work,
+        contentType: 'application/octet-stream; charset=utf-8',
+        success: function(result) {replacePart('repertoire',result,id,0);}
+      });
+
+  }
+ }

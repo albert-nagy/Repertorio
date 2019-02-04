@@ -544,6 +544,33 @@ def addWork():
 		flash("You are not logged in!")
 	return json.dumps(response)
 
+@app.route('/del_work', methods=['POST'])
+def delWork():
+	work = request.args.get('work')
+	user = request.args.get('id')
+	response = []
+	# If the user logged in is the owner of the profile, the first part of the
+	# response will be 1, otherwise 0. The second part will contain the data.
+	if 'user_id' in login_session:
+		if user == login_session['user_id']:
+			response.append(1)
+			with DBconn() as c:
+				# Delete work from the repertoire by its ID
+				query='DELETE FROM works WHERE id = %s'
+				c.execute(query, (work,))
+				# Finally generate the repertoire list with the new element
+				works = listRepertoire(c,user)
+				html_text = render_template('repertoire.html', works = works[1],
+					url=user, login_session=login_session)
+				response_data = (works[0],html_text)
+				response.append(response_data)
+		else:
+			response.append(0)
+			flash("You are not authorized to perform this operation!")
+	else:
+		response.append(0)
+		flash("You are not logged in!")
+	return json.dumps(response)
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'

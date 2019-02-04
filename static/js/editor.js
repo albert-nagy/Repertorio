@@ -1,4 +1,5 @@
-var select;
+var select1;
+var select2;
 
 function authOperation(result)
   {
@@ -143,27 +144,26 @@ function editContent(form, what, id) {
       {
         if (result == 0)
         {
-        select = document.getElementById('cat_selector').innerHTML;
+        select1 = document.getElementById('cat_selector').innerHTML;
         text = `<strong>Create Category: </strong>
           <input type="text" name="category" value="" /> 
           <button type="button" onclick="replacePart('cat_selector',1,0,0)">Select an existing category instead</button>`; 
         }
         else
-          text = select;
+          text = select1;
       }
     else if (what == 'inst_selector')
       {
         if (result == 0)
         {
-        select = document.getElementById('inst_selector').innerHTML;
+        select2 = document.getElementById('inst_selector').innerHTML;
         text = `<strong>Create Instrument: </strong>
           <input type="text" name="instrument" value="" /> 
           <button type="button" onclick="replacePart('inst_selector',1,0,0)">Select an instrument from the list</button>`; 
         }
         else
-          text = select;
+          text = select2;      
       }
-
     document.getElementById(what).innerHTML = text;
     }
 

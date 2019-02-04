@@ -3,7 +3,7 @@
 {% include "header.html" %}
 	<main>
 	{% for r in result %}
-            <p><a href="/instruments/{{r[1]}}">{{r[0]}}</a></p>
+            <p><a href="/instruments/{{r[1]}}">{{r[0]}} ({{r[2]}})</a></p>
     {% endfor %}	
 	</main>
 {% endblock %}

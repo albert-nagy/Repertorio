@@ -282,7 +282,12 @@ def disconnect():
 @app.route('/')
 def showIndex():
 	with DBconn() as c:
-		query = "SELECT name, url FROM instruments ORDER BY rank"
+		query = """SELECT i.name, i.url, COUNT(DISTINCT m.name)
+		FROM instruments i
+		LEFT JOIN works w ON w.instrument = i.url
+		LEFT JOIN musicians m ON m.url = w.creator
+		GROUP BY i.name,i.rank,i.url
+		ORDER BY i.rank"""
 		c.execute(query)
 		result = c.fetchall()
 		return render_template('start.html', result=result, STATE=makeState(),
@@ -350,9 +355,12 @@ def createForm():
 					query = "SELECT url, name FROM instruments ORDER BY rank"
 					c.execute(query)
 					for instrument in c.fetchall():
-						if instrument[0] == main_instrument[0]:
-							selected = ' selected="selected"'
-						else:
+						try:
+							if instrument[0] == main_instrument[0]:
+								selected = ' selected="selected"'
+							else:
+								selected = ''
+						except TypeError:
 							selected = ''
 						instruments+='<option value="{}"{}>{}</option>\n'.format(
 							instrument[0],selected,instrument[1])

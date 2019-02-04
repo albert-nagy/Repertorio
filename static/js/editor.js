@@ -66,15 +66,22 @@ function editContent(form, what, id) {
       }
     else
       instrument = encodeURIComponent(form.elements['instrument'].value.trim());
-    var content = '&composer='+encodeURIComponent(composer)+'&title='+encodeURIComponent(title)+'&duration='+duration+
-      '&category='+category+'&instrument='+instrument;    
-
-    $.ajax({
-      type: 'POST',
-      url: '/add_work?id='+id+content,
-      contentType: 'application/octet-stream; charset=utf-8',
-      success: function(result) {replacePart('repertoire',result,id,0);}
-    });
+    
+    if (!composer||!title||!duration||!category||!instrument)
+      alert("Please fill out all fields!");
+    else if (isNaN(duration)||Math.round(duration)<1)
+      alert("Duration has to be a number greater than 0!");
+    else
+      {
+      var content = '&composer='+encodeURIComponent(composer)+'&title='+encodeURIComponent(title)+
+      '&duration='+Math.round(duration)+'&category='+category+'&instrument='+instrument;
+      $.ajax({
+        type: 'POST',
+        url: '/add_work?id='+id+content,
+        contentType: 'application/octet-stream; charset=utf-8',
+        success: function(result) {replacePart('repertoire',result,id,0);}
+      });
+      }
     }
 
   function replacePart(what,result,id,form)

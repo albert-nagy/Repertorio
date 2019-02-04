@@ -1,4 +1,4 @@
-{% if url == login_session['user_id'] %}
+			{% if url == login_session['user_id'] %}
 			<span id="add_work">
 				<button class="add" onclick="getForm('add_work','{{ login_session['user_id'] }}');">+ Add Work to your Repertoire</button>
 			</span>
@@ -27,7 +27,11 @@
 						<h4>{{work[5]}}</h4>
 						{% do categories.append(work[5]) %}
 					{% endif %}
+					{% if url == login_session['user_id'] %}
+					<p class="work"><strong>{{work[1]}}:</strong> {{work[2]}} {{work[3]}}' <button type="button" onclick="editWork({{work[0]}})">&#128393;</button> <button type="button" onclick="delWork({{work[0]}})">&#215;</button></p> 
+					{% else %}
 					<p class="work"><strong>{{work[1]}}:</strong> {{work[2]}} {{work[3]}}'</p>
+					{% endif %}
 					{% set i = i + 1 %}
 				{% endfor %}
 				{# Close the last category #}

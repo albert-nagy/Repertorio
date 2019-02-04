@@ -494,10 +494,10 @@ def addWork():
 					query='SELECT MAX(rank) FROM instruments'
 					c.execute(query)
 					rank = c.fetchone()[0] + 1
-					query='''INSERT INTO instruments (url,name,rank)
-					VALUES (%s,%s,%s)'''
+					query='''INSERT INTO instruments (url,name,rank,creator)
+					VALUES (%s,%s,%s,%s)'''
 					url = slugify(instrument)
-					c.execute(query, (url,instrument,rank))
+					c.execute(query, (url,instrument,rank, user))
 				else:
 					# If found, use the instrument variable as instrument id for
 					# further queries

@@ -127,9 +127,11 @@ function editContent(form, what, id) {
                 <p><label><strong>Composer name: </strong><input type="text" name="composer" value="" /></label>
                 <label> <strong>Title: </strong><input type="text" name="title" value="" /></label> 
                 <label><strong>Duration: </strong><input type="text" name="duration" value="" /> min</label></p>
-                <p><label><strong>Instrument: </strong><select id="instrument">
-                `+ response[0] +`</select></label> 
-                <label id="cat_selector">`+ response[1] +` <button type="button" onclick="replacePart('cat_selector',0,0,0)">+ New category</button></label></p>
+                <p><label id="inst_selector"> <strong>Instrument: </strong><select id="instrument">
+                `+ response[0] +`</select> 
+                <button type="button" onclick="replacePart('inst_selector',0,0,0)">+ New instrument</button></label><br />
+                <label id="cat_selector">`+ response[1] +` 
+                <button type="button" onclick="replacePart('cat_selector',0,0,0)">+ New category</button></label></p>
                 <button type="submit" class="edit">Save</button>
                 <button type="reset" class="cancel" onclick="replacePart('add_work',0,'`+id+`',0)">Cancel</button>
                 </form>`;
@@ -149,6 +151,18 @@ function editContent(form, what, id) {
           text = `<strong>Create Category: </strong>
             <input type="text" name="category" value="" /> 
             <button type="button" onclick="replacePart('cat_selector',1,0,0)">Select an existing category instead</button>`; 
+          }
+          else
+            text = select;
+        }
+      else if (what == 'inst_selector')
+        {
+          if (result == 0)
+          {
+          select = document.getElementById('inst_selector').innerHTML;
+          text = `<strong>Create Instrument: </strong>
+            <input type="text" name="instrument" value="" /> 
+            <button type="button" onclick="replacePart('inst_selector',1,0,0)">Select an instrument from the list</button>`; 
           }
           else
             text = select;

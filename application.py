@@ -388,11 +388,11 @@ def createForm():
 						categories += '''onclick="replacePart'''
 						categories += '''('cat_selector',0,0,0)">'''
 						categories += '''+ New category</button>'''
-					# Put the category input or select into the options list	
-					options.append(categories)
-					# Then append this list to the response list
-					#for the final JSON output
-					response.append(options)
+					#Create form from template and append it to the AJAX response
+					html_text = render_template('addform.html',
+					instruments=instruments, categories=categories,
+					login_session=login_session)
+					response.append(html_text)
 		else:
 			response.append(0)
 			flash("You are not authorized to perform this operation!")

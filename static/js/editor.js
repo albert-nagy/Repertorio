@@ -130,56 +130,46 @@ function editContent(form, what, id) {
     else if (what == 'add_work')
       {
       if (form == 1)
-        text = `<form action="javascript:void(0)" method="post" onsubmit="addWork(this, '`+id+`')">
-                <p><label><strong>Composer name: </strong><input type="text" name="composer" value="" /></label>
-                <label> <strong>Title: </strong><input type="text" name="title" value="" /></label> 
-                <label><strong>Duration: </strong><input type="text" name="duration" value="" /> min</label></p>
-                <p><label id="inst_selector"> <strong>Instrument: </strong><select id="instrument">
-                `+ response[0] +`</select> 
-                <button type="button" onclick="replacePart('inst_selector',0,0,0)">+ New instrument</button></label><br />
-                <label id="cat_selector">`+ response[1] +`</label></p>
-                <button type="submit" class="edit">Save</button>
-                <button type="reset" class="cancel" onclick="replacePart('add_work',0,'`+id+`',0)">Cancel</button>
-                </form>`;
+        text = response;
+      else
+        text = `<button class="add" onclick="getForm('add_work','`+id+`');">+ Add Work to your Repertoire</button>`;
+      }
+    else if (what == 'repertoire')
+      {
+      document.getElementById('instruments').innerHTML = response[0]; 
+      text = response[1];
+      }
+    else if (what == 'cat_selector')
+      {
+        if (result == 0)
+        {
+        select = document.getElementById('cat_selector').innerHTML;
+        text = `<strong>Create Category: </strong>
+          <input type="text" name="category" value="" /> 
+          <button type="button" onclick="replacePart('cat_selector',1,0,0)">Select an existing category instead</button>`; 
+        }
         else
-          text = `<button class="add" onclick="getForm('add_work','`+id+`');">+ Add Work to your Repertoire</button>`;
-        }
-      else if (what == 'repertoire')
+          text = select;
+      }
+    else if (what == 'inst_selector')
+      {
+        if (result == 0)
         {
-        document.getElementById('instruments').innerHTML = response[0]; 
-        text = response[1];
+        select = document.getElementById('inst_selector').innerHTML;
+        text = `<strong>Create Instrument: </strong>
+          <input type="text" name="instrument" value="" /> 
+          <button type="button" onclick="replacePart('inst_selector',1,0,0)">Select an instrument from the list</button>`; 
         }
-      else if (what == 'cat_selector')
-        {
-          if (result == 0)
-          {
-          select = document.getElementById('cat_selector').innerHTML;
-          text = `<strong>Create Category: </strong>
-            <input type="text" name="category" value="" /> 
-            <button type="button" onclick="replacePart('cat_selector',1,0,0)">Select an existing category instead</button>`; 
-          }
-          else
-            text = select;
-        }
-      else if (what == 'inst_selector')
-        {
-          if (result == 0)
-          {
-          select = document.getElementById('inst_selector').innerHTML;
-          text = `<strong>Create Instrument: </strong>
-            <input type="text" name="instrument" value="" /> 
-            <button type="button" onclick="replacePart('inst_selector',1,0,0)">Select an instrument from the list</button>`; 
-          }
-          else
-            text = select;
-        }
+        else
+          text = select;
+      }
 
     document.getElementById(what).innerHTML = text;
     }
 
 function delWork(work,id)
  {
-  if (confirm("Are you sure to delete this work"))
+  if (confirm("Are you sure to delete this work?"))
   {
   $.ajax({
         type: 'POST',

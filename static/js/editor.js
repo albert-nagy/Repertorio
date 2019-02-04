@@ -180,3 +180,12 @@ function delWork(work,id)
 
   }
  }
+
+ function editWork(work, id) {
+  $.ajax({
+      type: 'POST',
+      url: '/worktoedit?work='+work+'&id='+id,
+      contentType: 'application/octet-stream; charset=utf-8',
+      success: function(result) {replacePart('add_work',result,id,1);}    
+  }); 
+  }

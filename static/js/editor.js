@@ -137,8 +137,7 @@ function editContent(form, what, id) {
                 <p><label id="inst_selector"> <strong>Instrument: </strong><select id="instrument">
                 `+ response[0] +`</select> 
                 <button type="button" onclick="replacePart('inst_selector',0,0,0)">+ New instrument</button></label><br />
-                <label id="cat_selector">`+ response[1] +` 
-                <button type="button" onclick="replacePart('cat_selector',0,0,0)">+ New category</button></label></p>
+                <label id="cat_selector">`+ response[1] +`</label></p>
                 <button type="submit" class="edit">Save</button>
                 <button type="reset" class="cancel" onclick="replacePart('add_work',0,'`+id+`',0)">Cancel</button>
                 </form>`;

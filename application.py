@@ -383,7 +383,11 @@ def createForm():
 						for category in result:
 							categories += '''<option value="{}">{}</option>
 							\n'''.format(category[0],category[1])
-						categories += '''</select>'''
+						categories += '''</select> '''
+						categories += '''<button type="button" '''
+						categories += '''onclick="replacePart'''
+						categories += '''('cat_selector',0,0,0)">'''
+						categories += '''+ New category</button>'''
 					# Put the category input or select into the options list	
 					options.append(categories)
 					# Then append this list to the response list

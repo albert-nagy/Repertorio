@@ -1,6 +1,5 @@
 var select1;
 var select2;
-var category_text;
 
 function authOperation(result)
   {
@@ -29,6 +28,9 @@ function editContent(form, what, id) {
     content = '&phone='+encodeURIComponent(form.elements['phone'].value)+'&address='+encodeURIComponent(form.elements['address'].value);
   else if (what == 'email_privacy')
     content = '';
+  // If it is a category
+  else if (what.substring(0,2) == 'c_')
+    content = '&name='+encodeURIComponent(form.elements['category'].value);
 
   $.ajax({
       type: 'POST',
@@ -172,13 +174,16 @@ function editContent(form, what, id) {
     else if (what.substring(0,2) == 'c_')
       {
       if (form == 1)
-        {
-        category_text = document.getElementById(what).innerHTML;
         text = `<form action="javascript:void(0)" method="post" onsubmit="editContent(this, '`+what+`', '`+id+`')">
                 <input type="text" name="category" value="`+response+`" />
                 <button type="submit" class="edit">Save</button>
                 <button type="reset" class="cancel" onclick="Cancel('`+what+`','`+id+`')">Cancel</button>
                 </form>`;
+        
+      else
+        {
+        replacePart('repertoire',result,id,0);
+        return
         }
       }
     document.getElementById(what).innerHTML = text;

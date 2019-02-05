@@ -474,7 +474,20 @@ def editInfo():
 					# Update email privacy in DB and return new button text
 					c.execute(query, (public,login_session['user_id']))
 					response.append(button_text)
-				
+			# If it's a category, get the ID by slicing the string:	
+			elif what[0:2] == 'c_':
+				category = what[2:]	
+				name = request.args.get('name')
+				with DBconn() as c:
+					if action != 'cancel':
+						# Update category name in DB
+						query = "UPDATE categories SET name = %s WHERE id = %s"
+						c.execute(query, (name,category))
+					works = listRepertoire(c,user)
+					html_text = render_template('repertoire.html', works = works[1],
+					url=user, login_session=login_session)
+					response_data = (works[0],html_text)
+					response.append(response_data)
 		else:
 			response.append(0)
 			flash("You are not authorized to perform this operation!")

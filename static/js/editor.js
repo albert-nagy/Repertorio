@@ -23,14 +23,22 @@ function getForm(what, id)
 function editContent(form, what, id) {
   var content;
   if (what == 'bio')
-    content = '&text='+encodeURIComponent(form.elements['edit_bio'].value);
+    content = '&text='+encodeURIComponent(form.elements['edit_bio'].value.trim());
   else if (what == 'contact')
-    content = '&phone='+encodeURIComponent(form.elements['phone'].value)+'&address='+encodeURIComponent(form.elements['address'].value);
+    content = '&phone='+encodeURIComponent(form.elements['phone'].value.trim())+'&address='+encodeURIComponent(form.elements['address'].value.trim());
   else if (what == 'email_privacy')
     content = '';
   // If it is a category
   else if (what.substring(0,2) == 'c_')
-    content = '&name='+encodeURIComponent(form.elements['category'].value);
+    {
+    var name = form.elements['category'].value.trim();
+    if (!name)
+      {
+      alert("Please fill out the category name!"); 
+      return
+      }
+    content = '&name='+encodeURIComponent(name);
+    }
 
   $.ajax({
       type: 'POST',
@@ -182,6 +190,7 @@ function editContent(form, what, id) {
         
       else
         {
+        // Reload the whole repertoire list to update categories in the add_work form as well
         replacePart('repertoire',result,id,0);
         return
         }

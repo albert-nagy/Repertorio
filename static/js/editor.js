@@ -181,7 +181,7 @@ function delWork(work,id)
   }
  }
 
- function editWork(work, id) {
+ function workToEdit(work, id) {
   $.ajax({
       type: 'POST',
       url: '/worktoedit?work='+work+'&id='+id,

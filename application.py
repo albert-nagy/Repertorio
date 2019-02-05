@@ -282,7 +282,7 @@ def disconnect():
 @app.route('/')
 def showIndex():
 	with DBconn() as c:
-		query = """SELECT i.name, i.url, COUNT(DISTINCT m.name)
+		query = """SELECT i.name, i.url, COUNT(DISTINCT m.name), i.creator
 		FROM instruments i
 		LEFT JOIN works w ON w.instrument = i.url
 		LEFT JOIN musicians m ON m.url = w.creator

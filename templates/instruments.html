@@ -1,0 +1,14 @@
+{% for r in result %}
+		{% if r[3] == login_session['user_id'] %}
+			<p><span id="i_{{r[1]}}"><a href="/instruments/{{r[1]}}">{{r[0]}} ({{r[2]}})</a> 
+			{% if r[2] <= 1 %}
+				<button type="button" onclick="getForm('i_{{r[1]}}','{{ login_session['user_id'] }}')" title="Edit Instrument">&#128393;</button>
+			{% endif %}
+			{% if r[2] == 0 %}
+				<button type="button" onclick="delInstrument('{{r[1]}}','{{ login_session['user_id'] }}')" title="Delete Instrument">&#215;</button>
+			{% endif %}
+			</span></p>
+		{% else %}
+            <p><a href="/instruments/{{r[1]}}">{{r[0]}} ({{r[2]}})</a></p>
+        {% endif %}
+    {% endfor %}

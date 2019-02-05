@@ -13,7 +13,7 @@ def setupDB(db,c):
 	picture TEXT, bio TEXT, email TEXT, public INT, tel TEXT, address TEXT)""")
 
 	c.execute("""CREATE TABLE instruments(url TEXT PRIMARY KEY, name TEXT,
-	rank INT, creator TEXT REFERENCES musicians(url))""")
+	rank INT, creator TEXT)""")
 
 	c.execute("""CREATE TABLE categories(id SERIAL PRIMARY KEY, name TEXT,
 	creator TEXT REFERENCES musicians(url))""")

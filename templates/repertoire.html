@@ -28,7 +28,7 @@
 						{% do categories.append(work[5]) %}
 					{% endif %}
 					{% if url == login_session['user_id'] %}
-					<p class="work"><strong>{{work[1]}}:</strong> {{work[2]}} {{work[3]}}' <button type="button" onclick="workToEdit({{work[0]}},'{{ login_session['user_id'] }}')">&#128393;</button> <button type="button" onclick="delWork({{work[0]}},'{{ login_session['user_id'] }}')">&#215;</button></p> 
+					<p class="work"><strong>{{work[1]}}:</strong> {{work[2]}} {{work[3]}}' <button type="button" onclick="workToEdit({{work[0]}},'{{ login_session['user_id'] }}')" title="Edit">&#128393;</button> <button type="button" onclick="delWork({{work[0]}},'{{ login_session['user_id'] }}')" title="Delete">&#215;</button></p> 
 					{% else %}
 					<p class="work"><strong>{{work[1]}}:</strong> {{work[2]}} {{work[3]}}'</p>
 					{% endif %}

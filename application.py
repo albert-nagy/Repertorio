@@ -74,7 +74,7 @@ def getUserID(email):
 
 def listRepertoire(c,musician_id):
 	query = '''SELECT w.id, w.composer, w.title, w.duration,
-	i.name, c.name FROM works w, instruments i, categories c
+	i.name, c.name, c.id FROM works w, instruments i, categories c
 	WHERE w.creator = %s AND i.url = w.instrument AND c.id = w.category
 	ORDER BY i.url, c.id, split_part(w.composer, ' ', 2), w.title'''
 	c.execute(query, (musician_id,))
@@ -390,6 +390,15 @@ def createForm():
 					instruments=instruments, categories=categories,
 					login_session=login_session)
 					response.append(html_text)
+			# If it's a category, get the ID by slicing the string:	
+			elif what[0:2] == 'c_':
+				category = what[2:]
+				# Get category name and add to the AJAX response
+				with DBconn() as c:
+					query = """SELECT name FROM categories WHERE id = %s"""
+					c.execute(query, (category,))
+					name = c.fetchone()
+					response.append(name[0])
 		else:
 			response.append(0)
 			flash("You are not authorized to perform this operation!")
@@ -646,6 +655,36 @@ def workToEdit():
 		flash("You are not logged in!")
 	return json.dumps(response)
 
+@app.route('/del_cat', methods=['POST'])
+def delCat():
+	category = request.args.get('category')
+	user = request.args.get('id')
+	response = []
+	# If the user logged in is the owner of the profile, the first part of the
+	# response will be 1, otherwise 0. The second part will contain the data.
+	if 'user_id' in login_session:
+		if user == login_session['user_id']:
+			response.append(1)
+			with DBconn() as c:
+				# Delete all works from repertoire with this category ID
+				query='DELETE FROM works WHERE category = %s'
+				c.execute(query, (category,))
+				# Delete the category itself
+				query='DELETE FROM categories WHERE id = %s'
+				c.execute(query, (category,))
+				# Finally generate the repertoire list with the new element
+				works = listRepertoire(c,user)
+				html_text = render_template('repertoire.html', works = works[1],
+					url=user, login_session=login_session)
+				response_data = (works[0],html_text)
+				response.append(response_data)
+		else:
+			response.append(0)
+			flash("You are not authorized to perform this operation!")
+	else:
+		response.append(0)
+		flash("You are not logged in!")
+	return json.dumps(response)
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'

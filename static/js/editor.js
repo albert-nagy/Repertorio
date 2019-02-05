@@ -1,5 +1,6 @@
 var select1;
 var select2;
+var category_text;
 
 function authOperation(result)
   {
@@ -10,13 +11,13 @@ function authOperation(result)
     return response[1];
   } 
 
-function getForm(what, id) {
+function getForm(what, id) 
+  {
   $.ajax({
       type: 'POST',
       url: '/infotoedit?what='+what+'&id='+id,
       contentType: 'application/octet-stream; charset=utf-8',
-      success: function(result) {replacePart(what,result,id,1);}
-      
+      success: function(result) {replacePart(what,result,id,1);}    
   }); 
   }
 
@@ -167,6 +168,19 @@ function editContent(form, what, id) {
         else
           text = select2;      
       }
+    // If it is a category
+    else if (what.substring(0,2) == 'c_')
+      {
+      if (form == 1)
+        {
+        category_text = document.getElementById(what).innerHTML;
+        text = `<form action="javascript:void(0)" method="post" onsubmit="editContent(this, '`+what+`', '`+id+`')">
+                <input type="text" name="category" value="`+response+`" />
+                <button type="submit" class="edit">Save</button>
+                <button type="reset" class="cancel" onclick="Cancel('`+what+`','`+id+`')">Cancel</button>
+                </form>`;
+        }
+      }
     document.getElementById(what).innerHTML = text;
     }
 
@@ -192,3 +206,16 @@ function delWork(work,id)
       success: function(result) {replacePart('add_work',result,id,1);}    
   }); 
   }
+
+function delCat(cat,id)
+ {
+  if (confirm("Are you sure to delete this category together with its content?"))
+  {
+  $.ajax({
+        type: 'POST',
+        url: '/del_cat?id='+id+'&category='+cat,
+        contentType: 'application/octet-stream; charset=utf-8',
+        success: function(result) {replacePart('repertoire',result,id,0);}
+      });
+  }
+ }

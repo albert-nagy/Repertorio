@@ -24,7 +24,11 @@
 						{% else %}
 							<div class="category right">
 						{% endif %}
+						{% if url == login_session['user_id'] %}
+						<h4><span id="c_{{work[6]}}">{{work[5]}} <button type="button" onclick="getForm('c_{{work[6]}}','{{ login_session['user_id'] }}')" title="Edit Category">&#128393;</button> <button type="button" onclick="delCat({{work[6]}},'{{ login_session['user_id'] }}')" title="Delete Category">&#215;</button></span></h4>
+						{% else %}
 						<h4>{{work[5]}}</h4>
+						{% endif %}
 						{% do categories.append(work[5]) %}
 					{% endif %}
 					{% if url == login_session['user_id'] %}

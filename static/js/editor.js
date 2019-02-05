@@ -46,7 +46,8 @@ function editContent(form, what, id) {
   }); 
   }
 
-  function addWork(form,id)
+// Add new work to repertoire or edit an existing one
+  function addWork(form,id,work)
     {
     var composer = form.elements['composer'].value.trim();
     var title = form.elements['title'].value.trim();
@@ -76,6 +77,8 @@ function editContent(form, what, id) {
       {
       var content = '&composer='+encodeURIComponent(composer)+'&title='+encodeURIComponent(title)+
       '&duration='+Math.round(duration)+'&category='+category+'&instrument='+instrument;
+      if (work > 0)
+        content += '&work='+work;
       $.ajax({
         type: 'POST',
         url: '/add_work?id='+id+content,

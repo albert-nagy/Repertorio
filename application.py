@@ -522,11 +522,22 @@ def addWork():
 					query='SELECT id FROM categories WHERE name = %s'
 					c.execute(query, (category,))
 					category = c.fetchone()[0]
-				# Then create the new Work entry using all data.
-				query='''INSERT INTO 
-				works (composer,title,duration,instrument,creator,category)
-				VALUES (%s,%s,%s,%s,%s,%s)'''
-				c.execute(query, (composer,title,duration,url,user,category))
+				# If no work ID passed, a new work must be added to the DB	
+				if not request.args.get('work'):
+					# Create the new Work entry using all data.
+					query='''INSERT INTO 
+					works (composer,title,duration,instrument,creator,category)
+					VALUES (%s,%s,%s,%s,%s,%s)'''
+					c.execute(query, (composer,title,duration,url,user,category))
+				# If there is a work ID, update an existing work 
+				else:
+					work = request.args.get('work')
+					query='''UPDATE works 
+					SET composer = %s, title = %s, duration = %s,
+					instrument = %s, creator = %s, category = %s
+					WHERE id = %s'''
+					c.execute(query, (composer,title,duration,url,user,category,
+						work))
 				# Finally generate the repertoire list with the new element
 				works = listRepertoire(c,user)
 				html_text = render_template('repertoire.html', works = works[1],

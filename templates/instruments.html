@@ -1,7 +1,13 @@
 <span id="instrument_list">
 {% for r in result %}
+			<p><span id="i_{{r[1]}}">
+			{% if r[2] > 0 %}
+			<a href="/instruments/{{r[1]}}">{{r[0]}} ({{r[2]}})</a>
+			{% else %}
+			{{r[0]}} (0)
+			{% endif %}
 		{% if r[3] == login_session['user_id'] %}
-			<p><span id="i_{{r[1]}}"><a href="/instruments/{{r[1]}}">{{r[0]}} ({{r[2]}})</a> 
+			
 			{% if r[2] <= 1 %}
 				<button type="button" onclick="getForm('i_{{r[1]}}','{{ login_session['user_id'] }}')" title="Edit Instrument">&#128393;</button>
 			{% endif %}
@@ -10,7 +16,7 @@
 			{% endif %}
 			</span></p>
 		{% else %}
-            <p><a href="/instruments/{{r[1]}}">{{r[0]}} ({{r[2]}})</a></p>
+            </p>
         {% endif %}
     {% endfor %}
 </span>

@@ -195,6 +195,8 @@ function editContent(form, what, id) {
         return
         }
       }
+    else if (what == 'instrument_list')
+      text = response;
     document.getElementById(what).innerHTML = text;
     }
 
@@ -230,6 +232,19 @@ function delCat(cat,id)
         url: '/del_cat?id='+id+'&category='+cat,
         contentType: 'application/octet-stream; charset=utf-8',
         success: function(result) {replacePart('repertoire',result,id,0);}
+      });
+  }
+ }
+
+ function delInstrument(instrument,id)
+ {
+  if (confirm("Are you sure to delete this instrument?"))
+  {
+  $.ajax({
+        type: 'POST',
+        url: '/del_instr?id='+id+'&instrument='+instrument,
+        contentType: 'application/octet-stream; charset=utf-8',
+        success: function(result) {replacePart('instrument_list',result,id,0);}
       });
   }
  }

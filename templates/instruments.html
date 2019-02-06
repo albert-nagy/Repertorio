@@ -1,3 +1,4 @@
+<span id="instrument_list">
 {% for r in result %}
 		{% if r[3] == login_session['user_id'] %}
 			<p><span id="i_{{r[1]}}"><a href="/instruments/{{r[1]}}">{{r[0]}} ({{r[2]}})</a> 
@@ -12,3 +13,4 @@
             <p><a href="/instruments/{{r[1]}}">{{r[0]}} ({{r[2]}})</a></p>
         {% endif %}
     {% endfor %}
+</span>

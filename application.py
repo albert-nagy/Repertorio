@@ -85,6 +85,18 @@ def listRepertoire(c,musician_id):
 	# The result will be a tuple:
 	return (instruments,repertoire)
 
+def listInstruments(c):
+	# Get all instruments with the number of musicians
+	# listing them in their repertoire
+	query = """SELECT i.name, i.url, COUNT(DISTINCT m.name), i.creator
+	FROM instruments i
+	LEFT JOIN works w ON w.instrument = i.url
+	LEFT JOIN musicians m ON m.url = w.creator
+	GROUP BY i.name,i.rank,i.url
+	ORDER BY i.rank"""
+	c.execute(query) 
+	return c.fetchall()
+
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -282,14 +294,7 @@ def disconnect():
 @app.route('/')
 def showIndex():
 	with DBconn() as c:
-		query = """SELECT i.name, i.url, COUNT(DISTINCT m.name), i.creator
-		FROM instruments i
-		LEFT JOIN works w ON w.instrument = i.url
-		LEFT JOIN musicians m ON m.url = w.creator
-		GROUP BY i.name,i.rank,i.url
-		ORDER BY i.rank"""
-		c.execute(query)
-		result = c.fetchall()
+		result = listInstruments(c)
 		return render_template('start.html', result=result, STATE=makeState(),
 			login_session=login_session)
 

@@ -400,8 +400,17 @@ def createForm():
 				category = what[2:]
 				# Get category name and add to the AJAX response
 				with DBconn() as c:
-					query = """SELECT name FROM categories WHERE id = %s"""
+					query = "SELECT name FROM categories WHERE id = %s"
 					c.execute(query, (category,))
+					name = c.fetchone()
+					response.append(name[0])
+			# If it's an instrument, get the ID by slicing the string:	
+			elif what[0:2] == 'i_':
+				instrument = what[2:]
+				# Get category name and add to the AJAX response
+				with DBconn() as c:
+					query = "SELECT name FROM instruments WHERE url = %s"
+					c.execute(query, (instrument,))
 					name = c.fetchone()
 					response.append(name[0])
 		else:
@@ -493,6 +502,42 @@ def editInfo():
 					url=user, login_session=login_session)
 					response_data = (works[0],html_text)
 					response.append(response_data)
+			# If it's a instrument, get the ID by slicing the string:	
+			elif what[0:2] == 'i_':
+				old_url = what[2:]	
+				name = request.args.get('name')
+				with DBconn() as c:
+					if action != 'cancel':
+						#Create new ID from name
+						new_url = slugify(name)
+						num = 0
+						# Check if the new and the old ID are identical
+						if new_url != old_url:
+							# If not, check if an instrument exists
+							#with the new ID
+							query = """SELECT COUNT(*) FROM instruments
+							WHERE url = %s"""
+							c.execute(query, (new_url,))
+							existing_instrument = c.fetchone()
+							num = existing_instrument[0]
+						if num == 0:
+							# Check if someone else lists the instrument in their
+							# repertoire
+							query = """SELECT COUNT (*) FROM works
+							WHERE instrument = %s AND creator != %s"""
+							c.execute(query, (old_url,user))
+							other_users = c.fetchone()
+							# Update instrument in DB only if no other user found 
+							if other_users[0] == 0:
+								query = """UPDATE instruments
+								SET url = %s, name = %s
+								WHERE url = %s AND creator = %s"""
+								c.execute(query,
+								(new_url,name,old_url, user))						
+					result = listInstruments(c)
+					html_text = render_template('instruments.html',
+					result=result, login_session=login_session)
+					response.append(html_text)
 		else:
 			response.append(0)
 			flash("You are not authorized to perform this operation!")

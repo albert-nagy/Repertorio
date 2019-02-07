@@ -39,6 +39,17 @@ function editContent(form, what, id) {
       }
     content = '&name='+encodeURIComponent(name);
     }
+  // If it is an instrument
+  else if (what.substring(0,2) == 'i_')
+    {
+    var name = form.elements['instrument'].value.trim();
+    if (!name)
+      {
+      alert("Please fill out the instrument name!"); 
+      return
+      }
+    content = '&name='+encodeURIComponent(name);
+    }
 
   $.ajax({
       type: 'POST',
@@ -186,8 +197,7 @@ function editContent(form, what, id) {
                 <input type="text" name="category" value="`+response+`" />
                 <button type="submit" class="edit">Save</button>
                 <button type="reset" class="cancel" onclick="Cancel('`+what+`','`+id+`')">Cancel</button>
-                </form>`;
-        
+                </form>`;  
       else
         {
         // Reload the whole repertoire list to update categories in the add_work form as well
@@ -197,6 +207,21 @@ function editContent(form, what, id) {
       }
     else if (what == 'instrument_list')
       text = response;
+    else if (what.substring(0,2) == 'i_')
+      {
+      if (form == 1)
+        text = `<form action="javascript:void(0)" method="post" onsubmit="editContent(this, '`+what+`', '`+id+`')">
+                <input type="text" name="instrument" value="`+response+`" />
+                <button type="submit" class="edit">Save</button>
+                <button type="reset" class="cancel" onclick="Cancel('`+what+`','`+id+`')">Cancel</button>
+                </form>`;  
+      else
+        {
+        // Reload the whole instrument list
+        replacePart('instrument_list',result,id,0);
+        return
+        }
+      }
     document.getElementById(what).innerHTML = text;
     }
 

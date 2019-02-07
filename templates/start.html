@@ -2,7 +2,9 @@
 {% block content %}
 {% include "header.html" %}
 	<main>
-	{% include "instruments.html" %}
+	{% if instrument == 0%}
+		{% include "instruments.html" %}
+	{% endif %}
 	{% include "musicians.html" %}
 	</main>
 {% endblock %}

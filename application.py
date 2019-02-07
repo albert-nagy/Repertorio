@@ -320,6 +320,13 @@ def showIndex():
 		return render_template('start.html', result=result, musicians=musicians,
 			instrument=0, STATE=makeState(), login_session=login_session)
 
+@app.route('/instruments/<instrument>')
+def showInstrument(instrument):
+	with DBconn() as c:
+		musicians = listMusicians(c,instrument)
+		return render_template('start.html', musicians=musicians,
+			instrument=instrument, STATE=makeState(), login_session=login_session)
+
 @app.route('/musicians/<musician_id>')
 def showProfile(musician_id):
 	with DBconn() as c:

@@ -206,7 +206,24 @@ function editContent(form, what, id) {
         }
       }
     else if (what == 'instrument_list')
-      text = response;
+      {
+      if (typeof response == 'object')
+        {
+        if (response[1] == 1)
+          {
+          alert("There is already an instrument with this name!");
+          return
+          }
+        else if (response[1] == 2)
+          {
+          alert("You are not allowed to modify the instrument's name.\nSomeone else is listing it already in their repertoire.");
+          return
+          }
+        text = response[0]
+        }
+      else
+        text = response;
+      }
     else if (what.substring(0,2) == 'i_')
       {
       if (form == 1)

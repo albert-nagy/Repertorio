@@ -507,11 +507,14 @@ def editInfo():
 				old_url = what[2:]	
 				name = request.args.get('name')
 				with DBconn() as c:
+					# Define an error code for the cases when it is not
+					# permitted to change the instrument's name
+					err_code = 0 
 					if action != 'cancel':
 						#Create new ID from name
 						new_url = slugify(name)
-						num = 0
 						# Check if the new and the old ID are identical
+						num = 0
 						if new_url != old_url:
 							# If not, check if an instrument exists
 							#with the new ID
@@ -533,11 +536,15 @@ def editInfo():
 								SET url = %s, name = %s
 								WHERE url = %s AND creator = %s"""
 								c.execute(query,
-								(new_url,name,old_url, user))						
+								(new_url,name,old_url, user))
+							else:
+								err_code = 2
+						else:
+							err_code = 1						
 					result = listInstruments(c)
 					html_text = render_template('instruments.html',
 					result=result, login_session=login_session)
-					response.append(html_text)
+					response.append((html_text,err_code))
 		else:
 			response.append(0)
 			flash("You are not authorized to perform this operation!")

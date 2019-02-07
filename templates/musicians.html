@@ -1,0 +1,11 @@
+<section id="musicians_list">
+	<ul>
+	{% for musician in musicians %}
+		{% if instrument == 0 %}
+		<li><img src="{{ musician[2] }}"><a href="{{ url_for('showProfile', musician_id=musician[1]) }}">{{ musician[0] }} <span class="plays">({{ musician[3] }})</span></a></li>
+		{% else %}
+		<li><img src="{{ musician[2] }}"><a href="{{ url_for('showProfile', musician_id=musician[1]) }}">{{ musician[0] }}</a></li>
+		{% endif %}
+	{% endfor %}
+	</ul>
+</section>

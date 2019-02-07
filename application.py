@@ -97,6 +97,27 @@ def listInstruments(c):
 	c.execute(query) 
 	return c.fetchall()
 
+def listMusicians(c,instrument):
+	# Get musicians, who already have a repertoire
+	if instrument == 0:
+		# If instrument is not defined, get all musicians (start page),
+		# together with their instruments
+		query = """SELECT m.name, m.url, m.picture,
+		STRING_AGG(DISTINCT i.name, ', ')
+		FROM musicians m, works w, instruments i
+		WHERE w.creator = m.url AND i.url = w.instrument
+		GROUP BY m.name,m.url
+		ORDER BY name"""
+		c.execute(query)
+	else:
+		# If instrument is specified, get musicians who play it
+		query = """SELECT DISTINCT m.name, m.url, m.picture
+		FROM musicians m, works w
+		WHERE w.instrument = %s AND w.creator = m.url
+		ORDER BY name"""
+		c.execute(query,(instrument,))
+	return c.fetchall()
+
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -294,9 +315,10 @@ def disconnect():
 @app.route('/')
 def showIndex():
 	with DBconn() as c:
+		musicians = listMusicians(c,0)
 		result = listInstruments(c)
-		return render_template('start.html', result=result, STATE=makeState(),
-			login_session=login_session)
+		return render_template('start.html', result=result, musicians=musicians,
+			instrument=0, STATE=makeState(), login_session=login_session)
 
 @app.route('/musicians/<musician_id>')
 def showProfile(musician_id):
@@ -378,7 +400,7 @@ def createForm():
 						categories = '''<strong>Create Category: </strong>
 						<input type="text" name="category" value="" />'''
 					else:
-					# If there are lready categories created by the user,
+					# If there are already categories created by the user,
 					# create a select for them
 						categories = '''<strong>Category: </strong>
 						<select id="category">\n'''

@@ -2,7 +2,7 @@
 {% for r in result %}
 			<p><span id="i_{{r[1]}}">
 			{% if r[2] > 0 %}
-			<a href="/instruments/{{r[1]}}">{{r[0]}} ({{r[2]}})</a>
+			<a href="{{ url_for('showInstrument', instrument=r[1]) }}">{{r[0]}} ({{r[2]}})</a>
 			{% else %}
 			{{r[0]}} (0)
 			{% endif %}

@@ -4,6 +4,9 @@
 <main>
 	<h1>{{ personal_data[0] }}<br />
 	<span id="instruments">{{ instruments }}</span></h1>
+	{% if url == login_session['user_id'] %}
+	<button type="button" class="delete" onclick="delProfile('{{ login_session['user_id'] }}');">Delete my Profile</button>
+	{% endif %}
 	<img src="{{ personal_data[1] }}">
 	<section class="userinfo">
 		<div class="bio">

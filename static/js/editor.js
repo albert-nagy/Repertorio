@@ -290,3 +290,20 @@ function delCat(cat,id)
       });
   }
  }
+
+ function delProfile(id)
+ {
+  if (confirm("Are you sure to delete your profile?\nAll your personal data and repertoire will get lost irrevocably!!!"))
+  {
+  $.ajax({
+        type: 'POST',
+        url: '/del_profile?id='+id,
+        contentType: 'application/octet-stream; charset=utf-8',
+        success: function(result) {
+          response = authOperation(result);
+          if (response == 1)
+            window.location.href = '/';
+        }
+      });
+  }
+ }

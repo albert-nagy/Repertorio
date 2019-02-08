@@ -74,7 +74,7 @@ def getUserID(email):
 
 def listRepertoire(c,musician_id):
 	query = '''SELECT w.id, w.composer, w.title, w.duration,
-	i.name, c.name, c.id FROM works w, instruments i, categories c
+	i.name, c.name, c.id, i.url FROM works w, instruments i, categories c
 	WHERE w.creator = %s AND i.url = w.instrument AND c.id = w.category
 	ORDER BY i.url, c.id, split_part(w.composer, ' ', 2), w.title'''
 	c.execute(query, (musician_id,))
@@ -369,6 +369,7 @@ def instrumentJSON(instrument):
 					categories_list[c-1].update(works=works)
 					works = []
 				c += 1
+			# Add the current work to the category's work list
 			works.append({"id": d[3], "composer": d[4], "title": d[5],
 			"duration": d[6]})
 			# If this is the last work in the list, complete the categories
@@ -418,10 +419,48 @@ def profileJSON(musician_id):
 		rep_list = listRepertoire(c,musician_id)
 		# Make a list of instruments from the first element
 		instruments = rep_list[0].split(', ')
-		# Create the repertoire list from the second one
-		repertoire = [{"id": r[0],"composer": r[1], "title": r[2],
-		"duration": r[3], "instrument": r[4], "category": r[5]}
-		for r in rep_list[1]]
+		# Create the repertoire list from the second one, sorted in categories
+		instrument_list = []
+		inst_set = set()
+		m = 0
+		i = 0
+		for d in rep_list[1]:
+		# Starting a new instrument
+			if d[7] not in inst_set:
+				# If this is not the first musician, add the repertoire
+				if m != 0:
+					categories_list[c-1].update(works=works)
+					instrument_list[m-1].update(repertoire=categories_list)
+				# Clear the categories and update the set of musicians
+				cat_set = set()
+				categories_list = []
+				c = 0
+				works = []
+				inst_set.add(d[7])
+				# Serialize the musician's data and put it into a list
+				instrument_list.append({"name": d[4], "id": d[7]})
+				m += 1
+			# If this work belongs to a new category, add category to the list
+			if d[6] not in cat_set:
+				cat_set.add(d[6])
+				categories_list.append({"name": d[5], "id": d[6]})
+				# If this not the first category, add the previous one
+				# to the list
+				if c > 0:
+					categories_list[c-1].update(works=works)
+					works = []
+				c += 1
+			# Add the current work to the category's work list
+			works.append({"id": d[0], "composer": d[1], "title": d[2],
+			"duration": d[3]})
+			# If this is the last work in the list, complete the categories
+			# and add the repertoire to the musician's info
+			if i == len(rep_list[1]) - 1:
+				categories_list[c-1].update(works=works)
+				instrument_list[m-1].update(repertoire=categories_list)
+			i += 1
+
+		repertoire = instrument_list
 		response.update(instruments=instruments,repertoire=repertoire)
 		return jsonify(response)
 

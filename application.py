@@ -1,6 +1,6 @@
 import psycopg2
 from flask import Flask, render_template, request, redirect, jsonify
-from flask import url_for, flash, session as login_session
+from flask import url_for, flash, jsonify, session as login_session
 
 import random
 import string
@@ -342,6 +342,36 @@ def showProfile(musician_id):
 		return render_template('profile.html', personal_data=personal_data,
 		instruments=works[0], works = works[1], url=musician_id,
 		STATE=makeState(), login_session=login_session)
+
+# JSON endpoint for musician profile
+@app.route('/api/musicians/<musician_id>')
+def profileJSON(musician_id):
+	with DBconn() as c:
+		# Get profile data for the selected musician
+		query = """SELECT name, picture, bio, email, public, tel, address
+		FROM musicians WHERE url = %s"""
+		c.execute(query, (musician_id,))
+		data = c.fetchone()
+		# Do not show email address if it is set private
+		if data[4] == 0:
+			email = 'private'
+		else:
+			email = data[3]
+		# Create base dictionary for JSON response
+		response = {"name": data[0], "id": musician_id, "picture": data[1],
+		"email": email, "phone": data[5], "address": data[6],
+		"biography": data[2]}
+		# Get repertoire
+		rep_list = listRepertoire(c,musician_id)
+		# Make a list of instruments from the first element
+		instruments = rep_list[0].split(', ')
+		# Create the repertoire list from the second one
+		repertoire = [{"id": r[0],"composer": r[1], "title": r[2],
+		"duration": r[3], "instrument": r[4], "category": r[5]}
+		for r in rep_list[1]]
+		response.update(instruments=instruments,repertoire=repertoire)
+		return jsonify(response)
+
 
 @app.route('/infotoedit', methods=['POST'])
 def createForm():

@@ -327,6 +327,59 @@ def showInstrument(instrument):
 		return render_template('start.html', musicians=musicians,
 			instrument=instrument, STATE=makeState(), login_session=login_session)
 
+# JSON endpoint for a specific instrument
+@app.route('/api/instruments/<instrument>')
+def instrumentJSON(instrument):
+	with DBconn() as c:
+		query = """SELECT m.name, m.url, m.picture, w.id, w.composer, w.title,
+		w.duration, c.name, c.id
+		FROM musicians m, works w, categories c
+		WHERE w.instrument = %s AND w.creator = m.url AND c.id = w.category
+		ORDER BY m.url, c.id, SPLIT_PART(w.composer, ' ', 2), w.title"""
+		c.execute(query,(instrument,))
+		data = c.fetchall()
+		musicians_list = []
+		mus_set = set()
+		m = 0
+		i = 0
+		for d in data:
+			# Starting a new musician
+			if d[1] not in mus_set:
+				# If this is not the first musician, add the repertoire
+				if m != 0:
+					categories_list[c-1].update(works=works)
+					musicians_list[m-1].update(repertoire=categories_list)
+				# Clear the categories and update the set of musicians
+				cat_set = set()
+				categories_list = []
+				c = 0
+				works = []
+				mus_set.add(d[1])
+				# Serialize the musician's data and put it into a list
+				musicians_list.append({"name": d[0], "id": d[1], 
+				"picture": d[2]})
+				m += 1
+			# If this work belongs to a new category, add category to the list
+			if d[8] not in cat_set:
+				cat_set.add(d[8])
+				categories_list.append({"name": d[7], "id": d[8]})
+				# If this not the first category, add the previous one
+				# to the list
+				if c > 0:
+					categories_list[c-1].update(works=works)
+					works = []
+				c += 1
+			works.append({"id": d[3], "composer": d[4], "title": d[5],
+			"duration": d[6]})
+			# If this is the last work in the list, complete the categories
+			# and add the repertoire to the musician's info
+			if i == len(data) - 1:
+				categories_list[c-1].update(works=works)
+				musicians_list[m-1].update(repertoire=categories_list)
+			i += 1
+
+		return jsonify(musicians_list)
+
 @app.route('/musicians/<musician_id>')
 def showProfile(musician_id):
 	with DBconn() as c:

@@ -1,9 +1,11 @@
 <header>
-<h1>Repertor &bull; io</h1>
+<a href="/">Repertor &bull; io</a>
 {% if 'username' not in login_session %}
 <div id="signinButton">
           <span class="g-signin"
+            data-longtitle="true"
             data-scope="openid email profile"
+            data-theme="light"
             data-clientid="945722933121-lbkncbgj0sht96it5lnmhktbsns74l3s.apps.googleusercontent.com"
             data-redirecturi="postmessage"
             data-accesstype="offline"
@@ -13,9 +15,9 @@
           </span>
         </div>
 
-        <div id="result"></div>
-
 <script>
+
+
 function signInCallback(authResult) {
   if (authResult['code']) {
     // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
@@ -83,11 +85,8 @@ function signInCallback(authResult) {
     });
   }
 </script>
-<fb:login-button
-  scope="public_profile,email"
-  onlogin="sendTokenToServer();">
-</fb:login-button>
 
+<div class="fb-login-button" data-width="116" data-size="medium" data-button-type="login_with" data-auto-logout-link="false" data-use-continue-as="false" scope="public_profile,email" onlogin="sendTokenToServer();"></div>
 		{% else %}
 		<script type="text/javascript">
 function Logout()

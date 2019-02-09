@@ -103,7 +103,7 @@ function Logout()
 
           <button id="logout" type="button" onclick="Logout();">Logout</button>
           {% if  request.path != url_for('showProfile', musician_id=login_session['user_id']) %}
-          <button id="my-profile" type="button"><a href="{{ url_for('showProfile', musician_id=login_session['user_id']) }}">My Profile</a></button>
+          <a id="my-profile" href="{{ url_for('showProfile', musician_id=login_session['user_id']) }}">My Profile</a>
           {% endif %}
 {% endif %}
 		

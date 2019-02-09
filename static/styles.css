@@ -11,7 +11,7 @@ header a {display: block;
 		color: white;
 		text-decoration: none;}
 
-header button {position: absolute;
+header button, #my-profile {position: absolute;
 		top: 25px;
 		background: none;
     	border: 2px solid white;
@@ -26,8 +26,7 @@ header button {position: absolute;
 
 #logout {right: 25px;}
 
-#my-profile {right: 170px;}
-#my-profile a {position: unset;}
+#my-profile {right: 170px; text-align: center;}
 
 #site-header {font-size: 36px;
 		margin: 18px 0 0 25px;

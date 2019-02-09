@@ -1,5 +1,5 @@
 <header>
-<a href="/">Repertor &bull; io</a>
+<a id="site-header" href="/">Repertor &bull; io</a>
 {% if 'username' not in login_session %}
 <div id="signinButton">
           <span class="g-signin"
@@ -101,9 +101,9 @@ function Logout()
 	}
 		</script>
 
-					<p><a onclick="Logout();" href="javascript:void(0)">Logout</a></p>
+          <button id="logout" type="button" onclick="Logout();">Logout</button>
           {% if  request.path != url_for('showProfile', musician_id=login_session['user_id']) %}
-					<p><a href="{{ url_for('showProfile', musician_id=login_session['user_id']) }}">My Profile</a></p>
+          <button id="my-profile" type="button"><a href="{{ url_for('showProfile', musician_id=login_session['user_id']) }}">My Profile</a></button>
           {% endif %}
 {% endif %}
 		

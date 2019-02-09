@@ -1,5 +1,43 @@
-body {margin: 0; background: linear-gradient(#000015, 25%, #00002A); font-family: Verdana, sans-serif;}
+body {margin: 0;
+		background:
+		linear-gradient(#000015, 25%, #00002A);
+		font-family: Verdana,
+		sans-serif;}
+
 header {height: 80px;}
-header a {display: block; position: absolute; color: white; font-size: 36px; margin: 18px 0 0 25px; font-weight: bold; text-decoration: none;}
-#signinButton {position: absolute; top: 22px; right: 25px;}
-.fb-login-button{ position: absolute !important; top: 24px; right: 165px; height: 36px;}
+
+header a {display: block;
+		position: absolute;
+		color: white;
+		text-decoration: none;}
+
+header button {position: absolute;
+		top: 25px;
+		background: none;
+    	border: 2px solid white;
+    	border-radius: 3px;
+    	color: white;
+    	font: bold 12px Verdana, sans-serif;
+    	text-transform: uppercase;
+    	padding: 5px;
+    	width: 120px;
+    	letter-spacing: 1.1px;
+    	cursor: pointer;}
+
+#logout {right: 25px;}
+
+#my-profile {right: 170px;}
+#my-profile a {position: unset;}
+
+#site-header {font-size: 36px;
+		margin: 18px 0 0 25px;
+		font-weight: bold;}
+
+#signinButton {position: absolute;
+		top: 22px;
+		right: 25px;}
+
+.fb-login-button {position: absolute !important;
+		top: 24px;
+		right: 165px;
+		height: 36px;}

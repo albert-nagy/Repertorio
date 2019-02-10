@@ -162,7 +162,8 @@ section#musicians_list {
 		text-align: justify;}
 
 .repertoire {
-		margin-top: 25px;}
+		margin: 25px 0 0 0;
+		padding-bottom: 50px;}
 
 h2 		{font-size: 22px;
 		color: #555;
@@ -175,6 +176,9 @@ p 		{margin: 8px 0 0;
 .repertoire h2, h3, .category {
 		margin-left: 50px;
 }
+
+.category h3 {
+		margin-left: 0;}
 
 footer {width: 80%;
 		padding: 25px 0;

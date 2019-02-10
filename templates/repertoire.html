@@ -3,23 +3,30 @@
 				<button class="add" onclick="getForm('add_work','{{ login_session['user_id'] }}');">+ Add Work to your Repertoire</button>
 			</span>
 			{% endif %}
-				{% set i = 0 %}
+				{% set i = [] %}
 				{% set instruments = [] %}
 				{% set categories = [] %}
 				{% for work in works %}
+					{% if work[5] not in categories %}
+						{# If this is not the first category, close the previous one first #}
+						{% if i|length > 0 %}
+							</div>
+						{% endif %}
+					{% endif %}
 					{# Start with the instrument name (there may be more instruments) #}
 					{% if work[4] not in instruments %}
+						{# If this is not the first category, close the previous one first #}
+						{% if i|length > 0 %}
+							</div>
+						{% endif %}
 						<h3>{{work[4]}}</h3>
 						{% do instruments.append(work[4]) %}
+						{% do categories.clear() %}
 					{% endif %}
 					{# Start a new category #}
 					{% if work[5] not in categories %}
-						{# If this is not the first category, close the previous one first #}
-						{% if i != 0 %}
-							</div>
-						{% endif %}
 						{# Over the half of all works start a new column #}
-						{% if i <= works|length/2 %}
+						{% if i|length <= works|length/2 %}
 							<div class="category">
 						{% else %}
 							<div class="category right">
@@ -36,7 +43,7 @@
 					{% else %}
 					<p class="work"><strong>{{work[1]}}:</strong> {{work[2]}} {{work[3]}}'</p>
 					{% endif %}
-					{% set i = i + 1 %}
+					{% do i.append(1) %}
 				{% endfor %}
 				{# Close the last category #}
 				</div>

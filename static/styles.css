@@ -94,17 +94,17 @@ main 	{width: 80%;
 
 section {
 		background-color: white;
-		width: 44%;
-		padding: 25px;
+		width: 47%;
+		padding: 25px 0;
 		border-radius: 5px;
 	}
 
 section h1  {
-		margin: 0 0 25px;
+		margin: 0 25px;
 		color: #555;}
 
 section ul {margin: 30px 0 0;
-		padding-left: 40px;}
+		padding-left: 65px;}
 
 section li {margin-bottom: 12px;
     	font-size: 17px;

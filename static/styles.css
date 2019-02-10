@@ -117,3 +117,13 @@ section#instrument_list {
 section#musicians_list {
 		min-height: 657px;
 		float: right;}
+
+footer {width: 80%;
+		padding: 25px 0;
+    	clear: both;
+    	margin: 0 auto;}
+
+footer p {text-align: center;
+		margin: 0;
+		color: white;
+		font-size: 14px;}

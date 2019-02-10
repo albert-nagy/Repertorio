@@ -100,8 +100,9 @@ section {
 	}
 
 section h1  {
+		font-size: 24px;
 		margin: 0 25px;
-		color: #555;}
+		color: #B98348;}
 
 section ul {margin: 30px 0 0;
 		padding-left: 65px;}
@@ -118,7 +119,7 @@ section li img {
 	    top: 17px;
 	    right: 10px;}
 
-.plays {font-weight: normal;
+.plays, #instruments {font-weight: normal;
     	text-transform: uppercase;
     	font-size: 14px;}
 
@@ -129,8 +130,51 @@ section#musicians_list {
 		min-height: 657px;
 		float: right;}
 
-.musicians-by-instrument{
+.musicians-by-instrument li {
+		margin-left: 50px;}
+
+.musicians-by-instrument, .userinfo, .repertoire {
 		width: 100%;}
+
+.musicians-by-instrument h1, .userinfo h1 {
+		font-size: 34px;
+		margin-left: 50px;}
+
+.userinfo {
+		position: relative;}
+
+.userinfo img {
+		border-radius: 50%;
+    	height: 200px;
+    	position: absolute;
+    	top: 50px;
+    	right: 50px;}
+
+#instruments {
+		font-size: 16px;
+		margin: 5px 0 0 50px;
+		color: #555;}
+
+.contact, .bio {margin: 25px 50px;
+    	width: 70%;}
+
+.bio 	{width: unset;
+		text-align: justify;}
+
+.repertoire {
+		margin-top: 25px;}
+
+h2 		{font-size: 22px;
+		color: #555;
+		margin: 0 0 15px;}
+
+p 		{margin: 8px 0 0;
+    	font-size: 15px;
+    	line-height: 20px;}
+
+.repertoire h2, h3, .category {
+		margin-left: 50px;
+}
 
 footer {width: 80%;
 		padding: 25px 0;

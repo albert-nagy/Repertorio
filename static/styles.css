@@ -4,7 +4,7 @@ body {margin: 0;
 		font-family: Verdana,
 		sans-serif;}
 
-header {height: 80px; 
+header {height: 40px; 
 		margin: 18px 25px 0 25px;}
 
 header a {display: block;
@@ -27,7 +27,8 @@ header button, #my-profile, #logout
 
 #logout {text-align: center;}
 
-#my-profile {margin-right: 25px; text-align: center;}
+#my-profile {margin-right: 25px;
+		text-align: center;}
 
 #site-header {float: left;
 		font-size: 36px;
@@ -41,3 +42,9 @@ header button, #my-profile, #logout
 .fb-login-button {float: right;
 		margin: 6px 25px 0 0;
 		height: 36px;}
+
+.flash 	{color: white;
+    	margin: 0;
+    	text-align: center}
+
+.flash ul {list-style-type: none;}

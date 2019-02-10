@@ -106,9 +106,9 @@ function Logout()
           <a id="my-profile" href="{{ url_for('showProfile', musician_id=login_session['user_id']) }}">My Profile</a>
           {% endif %}
 {% endif %}
-		
-		<div class = 'flash'>
-		      {% with messages = get_flashed_messages() %}
+	</header>
+  <div class = 'flash'>
+          {% with messages = get_flashed_messages() %}
       {% if messages %}
           
         <ul>
@@ -119,5 +119,4 @@ function Logout()
         {% endif %}
     {% endwith %}
 
-		</div>
-	</header>
+    </div>

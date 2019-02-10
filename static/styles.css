@@ -4,16 +4,16 @@ body {margin: 0;
 		font-family: Verdana,
 		sans-serif;}
 
-header {height: 80px;}
+header {height: 80px; 
+		margin: 18px 25px 0 25px;}
 
 header a {display: block;
-		position: absolute;
 		color: white;
 		text-decoration: none;}
 
 header button, #my-profile, #logout
-		{position: absolute;
-		top: 25px;
+		{float: right;
+		margin-top: 7px;
 		background: none;
     	border: 2px solid white;
     	border-radius: 3px;
@@ -25,19 +25,19 @@ header button, #my-profile, #logout
     	letter-spacing: 1.1px;
     	cursor: pointer;}
 
-#logout {right: 25px; text-align: center;}
+#logout {text-align: center;}
 
-#my-profile {right: 170px; text-align: center;}
+#my-profile {margin-right: 25px; text-align: center;}
 
-#site-header {font-size: 36px;
-		margin: 18px 0 0 25px;
+#site-header {float: left;
+		font-size: 36px;
+		margin: 0;
 		font-weight: bold;}
 
-#signinButton {position: absolute;
-		top: 22px;
-		right: 25px;}
+#signinButton {float: right;
+		margin-top: 4px;
+		right: 0;}
 
-.fb-login-button {position: absolute !important;
-		top: 24px;
-		right: 165px;
+.fb-login-button {float: right;
+		margin: 6px 25px 0 0;
 		height: 36px;}

@@ -684,11 +684,41 @@ def editInfo():
 							other_users = c.fetchone()
 							# Update instrument in DB only if no other user found 
 							if other_users[0] == 0:
-								query = """UPDATE instruments
-								SET url = %s, name = %s
-								WHERE url = %s AND creator = %s"""
-								c.execute(query,
-								(new_url,name,old_url, user))
+								# Check if there is a repertoire entry at all
+								# and get instrument's place in the list
+								query = """SELECT COUNT(w.id), i.rank
+								FROM works w, instruments i
+								WHERE w.instrument = %s
+								AND i.url = w.instrument
+								GROUP BY w.instrument,i.rank"""
+								c.execute(query, (old_url,))
+								inst_result = c. fetchone()
+								# If there are works in the repertoire with this
+								# instrument, prevent IntegrityError caused by
+								# existing foreign key constraint by creating a
+								# new instrument, updating the works and deleting
+								# the old one
+								if inst_result[0] > 0:
+									query="""INSERT INTO instruments
+									(url,name,rank,creator)
+									VALUES (%s,%s,%s,%s)"""
+									c.execute(query, (new_url,name,
+										inst_result[1],user))
+									query = """UPDATE works
+									SET instrument = %s
+									WHERE instrument = %s"""
+									c.execute(query,(new_url,old_url))
+									query = """DELETE FROM instruments
+									WHERE url = %s AND creator = %s"""
+									c.execute(query,(old_url,user))
+								# If no foreign key constraint present,
+								# just update the instrument
+								else:
+									query = """UPDATE instruments
+									SET url = %s, name = %s
+									WHERE url = %s AND creator = %s"""
+									c.execute(query,
+									(new_url,name,old_url, user))
 							else:
 								err_code = 2
 						else:

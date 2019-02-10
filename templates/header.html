@@ -101,7 +101,7 @@ function Logout()
 	}
 		</script>
 
-          <button id="logout" type="button" onclick="Logout();">Logout</button>
+          <a  href="javascript:void(0)" id="logout" type="button" onclick="Logout();">Logout</a>
           {% if  request.path != url_for('showProfile', musician_id=login_session['user_id']) %}
           <a id="my-profile" href="{{ url_for('showProfile', musician_id=login_session['user_id']) }}">My Profile</a>
           {% endif %}

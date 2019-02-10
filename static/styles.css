@@ -11,7 +11,8 @@ header a {display: block;
 		color: white;
 		text-decoration: none;}
 
-header button, #my-profile {position: absolute;
+header button, #my-profile, #logout
+		{position: absolute;
 		top: 25px;
 		background: none;
     	border: 2px solid white;
@@ -24,7 +25,7 @@ header button, #my-profile {position: absolute;
     	letter-spacing: 1.1px;
     	cursor: pointer;}
 
-#logout {right: 25px;}
+#logout {right: 25px; text-align: center;}
 
 #my-profile {right: 170px; text-align: center;}
 

@@ -1,5 +1,10 @@
+{% if instrument == 0 %}
 <section id="musicians_list">
 	<h1>Musicians</h1>
+{% else %}
+<section id="musicians_list" class="musicians-by-instrument">
+	<h1>{{instrument}}</h1>
+{% endif %}
 	<ul>
 	{% for musician in musicians %}
 		{% if instrument == 0 %}

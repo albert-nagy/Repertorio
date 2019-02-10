@@ -129,6 +129,9 @@ section#musicians_list {
 		min-height: 657px;
 		float: right;}
 
+.musicians-by-instrument{
+		width: 100%;}
+
 footer {width: 80%;
 		padding: 25px 0;
     	clear: both;

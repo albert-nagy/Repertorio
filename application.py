@@ -324,9 +324,12 @@ def showIndex():
 @app.route('/instruments/<instrument>')
 def showInstrument(instrument):
 	with DBconn() as c:
+		query = "SELECT name FROM instruments WHERE url = %s"
+		c.execute(query,(instrument,))
+		instr_name = c.fetchone()[0]
 		musicians = listMusicians(c,instrument)
 		return render_template('start.html', musicians=musicians,
-			instrument=instrument, STATE=makeState(), login_session=login_session)
+		instrument=instr_name, STATE=makeState(), login_session=login_session)
 
 # JSON endpoint for a specific instrument
 @app.route('/api/instruments/<instrument>')

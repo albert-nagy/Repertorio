@@ -111,6 +111,17 @@ section li {margin-bottom: 12px;
     	font-weight: bold;
     	color: #333;}
 
+section li img {
+		height: 50px;
+	    border-radius: 50%;
+	    position: relative;
+	    top: 17px;
+	    right: 10px;}
+
+.plays {font-weight: normal;
+    	text-transform: uppercase;
+    	font-size: 14px;}
+
 section#instrument_list {
 		float: left;}
 

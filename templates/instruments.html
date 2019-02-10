@@ -1,7 +1,8 @@
 <section id="instrument_list">
 	<h1>Instruments</h1>
+	<ul>
 {% for r in result %}
-			<p><span id="i_{{r[1]}}">
+			<li><span id="i_{{r[1]}}">
 			{% if r[2] > 0 %}
 			<a href="{{ url_for('showInstrument', instrument=r[1]) }}">{{r[0]}} ({{r[2]}})</a>
 			{% else %}
@@ -14,9 +15,8 @@
 			{% if r[2] == 0 %}
 				<button type="button" onclick="delInstrument('{{r[1]}}','{{ login_session['user_id'] }}')" title="Delete Instrument">&#215;</button>
 			{% endif %}
-			</span></p>
-		{% else %}
-            </p>
-        {% endif %}
+		{% endif %}
+			</span></li>       
     {% endfor %}
+    </ul>
 </section>

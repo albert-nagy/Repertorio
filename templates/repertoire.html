@@ -15,22 +15,20 @@
 					{% endif %}
 					{# Start with the instrument name (there may be more instruments) #}
 					{% if work[4] not in instruments %}
-						{# If this is not the first category, close the previous one first #}
+						{# If this is not the first category, close the previous one
+						and the previous instrument block first #}
 						{% if i|length > 0 %}
+							</div>
 							</div>
 						{% endif %}
 						<h3>{{work[4]}}</h3>
 						{% do instruments.append(work[4]) %}
 						{% do categories.clear() %}
+						<div class="inst-block">
 					{% endif %}
 					{# Start a new category #}
 					{% if work[5] not in categories %}
-						{# Over the half of all works start a new column #}
-						{% if i|length <= works|length/2 %}
 							<div class="category">
-						{% else %}
-							<div class="category right">
-						{% endif %}
 						{% if url == login_session['user_id'] %}
 						<h4><span id="c_{{work[6]}}">{{work[5]}} <button type="button" onclick="getForm('c_{{work[6]}}','{{ login_session['user_id'] }}')" title="Edit Category">&#128393;</button> <button type="button" onclick="delCat({{work[6]}},'{{ login_session['user_id'] }}')" title="Delete Category">&#215;</button></span></h4>
 						{% else %}
@@ -41,9 +39,10 @@
 					{% if url == login_session['user_id'] %}
 					<p class="work"><strong>{{work[1]}}:</strong> {{work[2]}} {{work[3]}}' <button type="button" onclick="workToEdit({{work[0]}},'{{ login_session['user_id'] }}')" title="Edit">&#128393;</button> <button type="button" onclick="delWork({{work[0]}},'{{ login_session['user_id'] }}')" title="Delete">&#215;</button></p> 
 					{% else %}
-					<p class="work"><strong>{{work[1]}}:</strong> {{work[2]}} {{work[3]}}'</p>
+					<p class="work"><strong>{{work[1]}}:</strong> {{work[2]}} <span class="duration">{{work[3]}}'</span></p>
 					{% endif %}
 					{% do i.append(1) %}
 				{% endfor %}
-				{# Close the last category #}
+				{# Close the last category and instrument block #}
+				</div>
 				</div>

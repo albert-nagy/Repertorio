@@ -96,8 +96,7 @@ section {
 		background-color: white;
 		width: 47%;
 		padding: 25px 0;
-		border-radius: 5px;
-	}
+		border-radius: 5px;}
 
 section h1  {
 		font-size: 24px;
@@ -173,12 +172,36 @@ p 		{margin: 8px 0 0;
     	font-size: 15px;
     	line-height: 20px;}
 
-.repertoire h2, h3, .category {
-		margin-left: 50px;
-}
+.repertoire h2 {
+		margin-left: 50px;}
 
-.category h3 {
-		margin-left: 0;}
+.inst-block {
+		margin: 0 50px;
+		-webkit-column-count: 2;
+		-moz-column-count: 2;
+		column-count: 2;}
+
+.category {
+		background-color: #F2E7DC;
+		display: inline-block;
+		width: 85%;
+		padding: 20px 25px 25px;
+		margin-top: 25px;
+		border-radius: 3px;}
+
+h3 		{color: #B98348;
+		text-transform: uppercase;
+		margin: 25px 0 0 50px;}
+
+h4		{margin: 0 0 25px;
+    	font-size: 18px;
+    	color: #555;}
+
+.duration {
+		font-weight: bold;
+		font-style: italic;
+		color: #777;}
+
 
 footer {width: 80%;
 		padding: 25px 0;

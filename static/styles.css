@@ -3,15 +3,18 @@ ul {list-style-type: none;}
 a {text-decoration: none;
 	color: #00002A;}
 
-body {margin: 0;
+body 	{margin: 0;
 		background:
 		linear-gradient(#000015, 25%, #00002A);
 		font-family: Verdana,
 		sans-serif;}
 
-header {height: 40px;
-		width: 80%; 
-		margin: 25px auto 0;}
+html	{background-color: #00002A;}
+
+header 	{height: 40px;
+	    width: 80%;
+	    margin: 0 auto;
+	    padding-top: 25px;}
 
 header a {display: block;
 		color: white;}

@@ -75,13 +75,9 @@ def getUserID(email):
 def listRepertoire(c,musician_id):
 	query = """SELECT w.id, w.composer, w.title, w.duration,
 	i.name, c.name, c.id, i.url
-	FROM works w, instruments i, categories c,
-	(SELECT COUNT(category) AS num, category
-	FROM works
-	GROUP BY category) cn
+	FROM works w, instruments i, categories c
 	WHERE  w.creator = %s AND i.url = w.instrument AND c.id = w.category
-	AND cn.category = w.category
-	ORDER BY i.url, cn.num DESC, c.id, split_part(w.composer, ' ', 2), w.title"""
+	ORDER BY i.url, c.id, split_part(w.composer, ' ', 2), w.title"""
 	c.execute(query, (musician_id,))
 	repertoire = c.fetchall()
 	# Get the instruments from the works in the musician's repertoire list

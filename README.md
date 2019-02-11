@@ -87,6 +87,7 @@ The JSON endpoint of a musician lists the user's all info with their repertoire,
 
 - Handle a large number of musicians: group them into blocks according to their initials
 - Make it possible for a user to change the order of their categories in repertoire
+- Make works and categories accessible and selectable for all users
 - Add administrator role to make predefined instruments editable
 - Change JavaScript alerts for more sophisticated alerting
 - Change pop-up windows of third-party authentication for embedded auth windows

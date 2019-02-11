@@ -39,7 +39,7 @@ python3 application.py
 ## Usage
 
 1. Access the start page at `http://localhost:8000/` 
-2. Sign in using the Google / Facebook Sign In buttoms at the top of the page to create your profile. After login you will get to your profile page wher you can start to fill in your contact info and biography.
+2. Sign in using the Google / Facebook Sign In buttons at the top of the page to create your profile. After login you will get to your profile page wher you can start to fill in your contact info and biography.
 3. You can access your profile page anytime using the "My Profile" button at the top of the page.
 4. Return to the start page by clicking on "Repertor &bull; io".
 5. Using the "Add work to your repertoire" populate your repertoire, selecting or creating instruments and categories. Once you have works in your repertoire, your profile goes public: it will be accessible from the start and instrument pages.
@@ -64,6 +64,20 @@ The page of a specific instrument lists all musicians who have works for this in
 `/musicians/<musician_id>`
 
 The profile page of a musician shows name, picture, contact info and biography of the user, and their repertoire below, sorted by instruments and categories. The profile owner can create, edit and modify their info from this page via AJAX calls.
+
+## JSON endpoints
+
+`/api/`
+
+This endpoint lists all instruments with name and ID and the musicians who play them (name, ID).
+
+`/api/instruments/<instrument>`
+
+The JSON endpoint of a specific instrument lists all musicians who play it (id, name, profile picture) and their repertoire for this instrument, sorted by categories.
+
+`/musicians/<musician_id>`
+
+The JSON endpoint of a musician lists the user's all info with their repertoire, sorted by instruments and categories.
 
 ## Known issues
 

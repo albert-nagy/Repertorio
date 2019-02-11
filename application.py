@@ -337,6 +337,25 @@ def showIndex():
 		musicians=musicians, instrument=0, STATE=makeState(),
 		login_session=login_session)
 
+# JSON endpoint for a start page
+@app.route('/api/')
+def indexJSON():
+	with DBconn() as c:
+		# Get all instruments with name and ID
+		instruments = listInstruments(c)
+		instrument_list = []
+		for instrument in instruments:
+			inst_data = {"name": instrument[0], "id": instrument[1]}
+			# If there are musicians who play this instrument,
+			#get their name and ID
+			if instrument[2] > 0:
+				musician_list = [{"name": name[0], "id": name[1]} for name in
+				listMusicians(c,instrument[1])]
+				inst_data.update(musicians=musician_list)
+			instrument_list.append(inst_data)
+		result = {"instruments": instrument_list}
+	return jsonify(result)
+
 @app.route('/instruments/<instrument>')
 def showInstrument(instrument):
 	with DBconn() as c:

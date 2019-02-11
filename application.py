@@ -28,8 +28,6 @@ APPLICATION_NAME = "Repertorio App"
 dbname = 'rep_catalog'
 
 # Database connection for all methods using WITH
-
-
 class DBconn:
     def __enter__(self):
         self.db = psycopg2.connect(dbname=dbname)
@@ -40,8 +38,6 @@ class DBconn:
         self.db.close()
 
 # Show line breaks for new line chars stored in database
-
-
 def nl2br(text):
     return markdown(text, extensions=['nl2br'])
 
@@ -135,6 +131,8 @@ def listMusicians(c, instrument):
         c.execute(query, (instrument,))
     return c.fetchall()
 
+# The OAuth mechanism is based on Udacity's OAuth 2.0 course material
+# (https://github.com/udacity/OAuth2.0)
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
@@ -220,7 +218,7 @@ def gconnect():
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
-    output = "you are now logged in as {}".format(login_session['username'])
+    output = "You are now logged in as {}".format(login_session['username'])
     flash(output)
     return url_for('showProfile', musician_id=login_session['user_id'])
 
@@ -279,14 +277,12 @@ def fbconnect():
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
-    output = "Now logged in as {}".format(login_session['username'])
+    output = "You are logged in as {}".format(login_session['username'])
     flash(output)
     return url_for('showProfile', musician_id=login_session['user_id'])
 
 
 app.route('/gdisconnect')
-
-
 def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token:
@@ -321,7 +317,7 @@ def fbdisconnect():
         facebook_id, access_token)
     h = httplib2.Http()
     result = h.request(url, 'DELETE')[1]
-    return "you have been logged out"
+    return "You have successfully been logged out."
 
 
 @app.route('/disconnect')
@@ -363,8 +359,6 @@ def showIndex():
             login_session=login_session)
 
 # JSON endpoint for a start page
-
-
 @app.route('/api/')
 def indexJSON():
     with DBconn() as c:
@@ -401,8 +395,6 @@ def showInstrument(instrument):
             login_session=login_session)
 
 # JSON endpoint for a specific instrument
-
-
 @app.route('/api/instruments/<instrument>')
 def instrumentJSON(instrument):
     with DBconn() as c:
@@ -484,8 +476,6 @@ def showProfile(musician_id):
             login_session=login_session)
 
 # JSON endpoint for musician profile
-
-
 @app.route('/api/musicians/<musician_id>')
 def profileJSON(musician_id):
     with DBconn() as c:
@@ -552,7 +542,7 @@ def profileJSON(musician_id):
         response.update(instruments=instruments, repertoire=repertoire)
         return jsonify(response)
 
-
+# Create edit forms with stored data
 @app.route('/infotoedit', methods=['POST'])
 def createForm():
     # Fill edit form with stored data
@@ -664,7 +654,7 @@ def createForm():
         flash("You are not logged in!")
     return json.dumps(response)
 
-
+# Edit informations
 @app.route('/edit', methods=['POST'])
 def editInfo():
     action = request.args.get('action')
@@ -831,7 +821,7 @@ def editInfo():
         flash("You are not logged in!")
     return json.dumps(response)
 
-
+# Add work to repertoire
 @app.route('/add_work', methods=['POST'])
 def addWork():
     composer = request.args.get('composer')
@@ -915,7 +905,7 @@ def addWork():
         flash("You are not logged in!")
     return json.dumps(response)
 
-
+# Delete work from repertoire
 @app.route('/del_work', methods=['POST'])
 def delWork():
     work = request.args.get('work')
@@ -947,7 +937,7 @@ def delWork():
         flash("You are not logged in!")
     return json.dumps(response)
 
-
+# Create form to edit work in repertoire
 @app.route('/worktoedit', methods=['POST'])
 def workToEdit():
     work = request.args.get('work')
@@ -1017,7 +1007,7 @@ def workToEdit():
         flash("You are not logged in!")
     return json.dumps(response)
 
-
+# Delete category
 @app.route('/del_cat', methods=['POST'])
 def delCat():
     category = request.args.get('category')
@@ -1052,7 +1042,7 @@ def delCat():
         flash("You are not logged in!")
     return json.dumps(response)
 
-
+# Delete instrument
 @app.route('/del_instr', methods=['POST'])
 def delInstr():
     instrument = request.args.get('instrument')
@@ -1086,7 +1076,7 @@ def delInstr():
         flash("You are not logged in!")
     return json.dumps(response)
 
-
+# Delete user profile
 @app.route('/del_profile', methods=['POST'])
 def delProfile():
     user = request.args.get('id')

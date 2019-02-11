@@ -65,6 +65,7 @@
 			
 		</div>
 	</section>
+	{% if works|length > 0 or url== login_session['user_id']  %}
 	<section class="repertoire">
 		<a name="repertoire"></a>
 		<h2>Repertoire</h2>
@@ -72,6 +73,7 @@
 			{% include "repertoire.html" %}
 		</span>
 	</section>
+	{% endif %}
 
 
 

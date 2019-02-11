@@ -119,12 +119,12 @@ function editContent(form, what, id) {
       {
       if (form == 0)
         text = `<p>`+response+`</p>
-          <button type="submit" class="edit" onclick="getForm('bio', '`+id+`');">Edit Bio</button>`;
+          <button type="submit" class="edit edit-contact" onclick="getForm('bio', '`+id+`');">Edit Bio</button>`;
       else
         text = `<form action="javascript:void(0)" method="post" onsubmit="editContent(this, 'bio', '`+id+`')">
                 <textarea name="edit_bio">`+response+`</textarea>
-                <button type="submit" class="edit">Save</button>
-                <button type="reset" class="cancel" onclick="Cancel('bio','`+id+`')">Cancel</button>
+                <button type="submit" class="add edit-contact">Save</button>
+                <button type="reset" class="cancel edit-contact" onclick="Cancel('bio','`+id+`')">Cancel</button>
                 </form>`;
       }
     else if (what == 'contact')
@@ -136,8 +136,8 @@ function editContent(form, what, id) {
         text = `<form action="javascript:void(0)" method="post" onsubmit="editContent(this, 'contact', '`+id+`')">
                 <p><label><strong>Phone: </strong><input type="text" name="phone" value="`+phone+`" /></label></p>
                 <p><label><strong>Address: </strong><input type="text" name="address" value="`+address+`" /></label></p>
-                <button type="submit" class="edit">Save</button>
-                <button type="reset" class="cancel" onclick="Cancel('contact','`+id+`')">Cancel</button>
+                <button type="submit" class="add edit-contact">Save</button>
+                <button type="reset" class="cancel edit-contact" onclick="Cancel('contact','`+id+`')">Cancel</button>
                 </form>`;
         }
       else
@@ -148,7 +148,7 @@ function editContent(form, what, id) {
           address = `-`;
         text = `<p><strong>Phone: </strong>`+phone+`</p>
                 <p><strong>Address: </strong>`+address+`</p>
-                <button type="submit" class="edit" onclick="getForm('contact','`+id+`');">Edit Contact Info</button>`
+                <button type="submit" class="edit edit-contact" onclick="getForm('contact','`+id+`');">Edit Contact Info</button>`
         }
       }
     else if (what == 'email_privacy')
@@ -170,9 +170,9 @@ function editContent(form, what, id) {
         if (result == 0)
         {
         select1 = document.getElementById('cat_selector').innerHTML;
-        text = `<strong>Create Category: </strong>
+        text = `<strong>Create Category: </strong><br />
           <input type="text" name="category" value="" /> 
-          <button type="button" onclick="replacePart('cat_selector',1,0,0)">Select an existing category instead</button>`; 
+          <button class="cancel" type="button" onclick="replacePart('cat_selector',1,0,0)">Select an existing category instead</button>`; 
         }
         else
           text = select1;
@@ -182,9 +182,9 @@ function editContent(form, what, id) {
         if (result == 0)
         {
         select2 = document.getElementById('inst_selector').innerHTML;
-        text = `<strong>Create Instrument: </strong>
+        text = `<strong>Create Instrument: </strong><br />
           <input type="text" name="instrument" value="" /> 
-          <button type="button" onclick="replacePart('inst_selector',1,0,0)">Select an instrument from the list</button>`; 
+          <button class="cancel" type="button" onclick="replacePart('inst_selector',1,0,0)">Select an instrument from the list</button>`; 
         }
         else
           text = select2;      
@@ -195,7 +195,7 @@ function editContent(form, what, id) {
       if (form == 1)
         text = `<form action="javascript:void(0)" method="post" onsubmit="editContent(this, '`+what+`', '`+id+`')">
                 <input type="text" name="category" value="`+response+`" />
-                <button type="submit" class="edit">Save</button>
+                <button type="submit" class="add">Save</button>
                 <button type="reset" class="cancel" onclick="Cancel('`+what+`','`+id+`')">Cancel</button>
                 </form>`;  
       else
@@ -229,7 +229,7 @@ function editContent(form, what, id) {
       if (form == 1)
         text = `<form action="javascript:void(0)" method="post" onsubmit="editContent(this, '`+what+`', '`+id+`')">
                 <input type="text" name="instrument" value="`+response+`" />
-                <button type="submit" class="edit">Save</button>
+                <button type="submit" class="add">Save</button>
                 <button type="reset" class="cancel" onclick="Cancel('`+what+`','`+id+`')">Cancel</button>
                 </form>`;  
       else

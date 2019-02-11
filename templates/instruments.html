@@ -10,10 +10,10 @@
 			{% endif %}
 		{% if r[3] == login_session['user_id'] %}
 			{% if r[2] <= 1 %}
-				<button type="button" onclick="getForm('i_{{r[1]}}','{{ login_session['user_id'] }}')" title="Edit Instrument">&#128393;</button>
+				<button class="edit small" type="button" onclick="getForm('i_{{r[1]}}','{{ login_session['user_id'] }}')" title="Edit Instrument">&#128393;</button>
 			{% endif %}
 			{% if r[2] == 0 %}
-				<button type="button" onclick="delInstrument('{{r[1]}}','{{ login_session['user_id'] }}')" title="Delete Instrument">&#215;</button>
+				<button class="delete small" type="button" onclick="delInstrument('{{r[1]}}','{{ login_session['user_id'] }}')" title="Delete Instrument">X</button>
 			{% endif %}
 		{% endif %}
 			</span></li>       

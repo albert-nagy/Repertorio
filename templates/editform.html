@@ -1,11 +1,15 @@
 <form action="javascript:void(0)" method="post" onsubmit="addWork(this, '{{ login_session['user_id'] }}', {{ work }})">
-<header>Edit work in repertoire:</header>
-<p><label><strong>Composer name: </strong><input type="text" name="composer" value="{{ work_data[0] }}" /></label>
-<label> <strong>Title: </strong><input type="text" name="title" value="{{ work_data[1] }}" /></label> 
-<label><strong>Duration: </strong><input type="text" name="duration" value="{{ work_data[2] }}" /> min</label></p>
-<p><label id="inst_selector"> <strong>Instrument: </strong><select id="instrument">{{ instruments | safe }}</select> 
-<button type="button" onclick="replacePart('inst_selector',0,0,0)">+ New instrument</button></label><br />
+<p class="form-header">Edit work in repertoire:</p>
+<p><label><strong>Composer name: </strong><br />
+<input type="text" name="composer" value="{{ work_data[0] }}" /></label><br />
+<label> <strong>Title: </strong><br />
+<input type="text" name="title" value="{{ work_data[1] }}" /></label><br /> 
+<label><strong>Duration: </strong><br /> 
+<input id="duration" type="text" name="duration" value="{{ work_data[2] }}" maxlength="3" /> min</label><br />
+<label id="inst_selector"> <strong>Instrument: </strong><br />
+<select id="instrument">{{ instruments | safe }}</select> 
+<button class="add long" type="button" onclick="replacePart('inst_selector',0,0,0)">+ New instrument</button></label><br />
 <label id="cat_selector">{{ categories | safe }}</label></p>
-<button type="submit" class="edit">Save</button>
-<button type="reset" class="cancel" onclick="replacePart('add_work',0,'{{ login_session['user_id'] }}',0)">Cancel</button>
+<button type="submit" class="add edit-contact">Save</button>
+<button type="reset" class="cancel edit-contact" onclick="replacePart('add_work',0,'{{ login_session['user_id'] }}',0)">Cancel</button>
 </form>

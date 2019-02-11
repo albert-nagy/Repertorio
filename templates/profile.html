@@ -6,16 +6,16 @@
 		<h1>{{ personal_data[0] }}</h1>
 		<p id="instruments">{{ instruments }}</p>
 		{% if url == login_session['user_id'] %}
-		<button type="button" class="delete" onclick="delProfile('{{ login_session['user_id'] }}');">Delete my Profile</button>
+		<button id="del_profile" type="button" class="delete" onclick="delProfile('{{ login_session['user_id'] }}');">Delete my Profile</button>
 		{% endif %}
 		{% if url == login_session['user_id'] %}
 		<div class="contact">
 			<h2>Contact info</h2>
 			<p><strong>Email:</strong> {{ personal_data[3] }} 
 				{% if personal_data[4] == 0 %}
-				<button id="email_privacy" onclick="editContent(this, 'email_privacy', '{{ login_session['user_id'] }}')">Set Public</button>
+				<button class="edit" id="email_privacy" onclick="editContent(this, 'email_privacy', '{{ login_session['user_id'] }}')">Set Public</button>
 				{% else %}
-				<button id="email_privacy" onclick="editContent(this, 'email_privacy', '{{ login_session['user_id'] }}')">Set Private</button>
+				<button  class="edit" id="email_privacy" onclick="editContent(this, 'email_privacy', '{{ login_session['user_id'] }}')">Set Private</button>
 				{% endif %}
 			</p>
 			<span id="contact">
@@ -29,7 +29,7 @@
 			{% else %}
 			<p><strong>Address:</strong> {{ personal_data[6] }}</p>
 			{% endif %}
-			<button class="edit" onclick="getForm('contact','{{ login_session['user_id'] }}');">Edit Contact Info</button>
+			<button class="edit edit-contact" onclick="getForm('contact','{{ login_session['user_id'] }}');">Edit Contact Info</button>
 			</span>
 		</div>
 		{% elif personal_data[4] == 1 or personal_data[5] or personal_data[6] %}
@@ -53,11 +53,11 @@
 			{% if not personal_data[2] and url != login_session['user_id'] %}
 				<p>No biography provided yet..</p>
 			{% elif not personal_data[2] and url == login_session['user_id'] %}
-			<button class="edit" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Edit Bio</button>
+			<button class="edit edit-contact" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Edit Bio</button>
 			{% elif personal_data[2] %}
 				{{ nl2br(personal_data[2])|safe }}
 				{% if url == login_session['user_id'] %}
-				<button class="edit" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Edit Bio</button>
+				<button class="edit edit-contact" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Edit Bio</button>
 				{% endif %}
 			{% endif %}
 			</span>

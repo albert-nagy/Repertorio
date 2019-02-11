@@ -536,19 +536,19 @@ def createForm():
 					result = c.fetchall()
 					# If no such category found, create input field for a new one
 					if len(result) == 0:
-						categories = '''<strong>Create Category: </strong>
+						categories = '''<strong>Create Category: </strong><br />
 						<input type="text" name="category" value="" />'''
 					else:
 					# If there are already categories created by the user,
 					# create a select for them
-						categories = '''<strong>Category: </strong>
+						categories = '''<strong>Category: </strong><br />
 						<select id="category">\n'''
 						for category in result:
 							categories += '''<option value="{}">{}</option>
 							\n'''.format(category[0],category[1])
 						categories += '''</select> '''
-						categories += '''<button type="button" '''
-						categories += '''onclick="replacePart'''
+						categories += '''<button class="add long" '''
+						categories += '''type="button" onclick="replacePart'''
 						categories += '''('cat_selector',0,0,0)">'''
 						categories += '''+ New category</button>'''
 					#Create form from template and append it to the AJAX response
@@ -889,7 +889,7 @@ def workToEdit():
 				result = c.fetchall()
 				# and create a dropdown list from them.
 				# Mark the work's category as selected.				
-				categories = '''<strong>Category: </strong>
+				categories = '''<strong>Category: </strong><br />
 				<select id="category">\n'''
 				for category in result:
 					if category[0] == work_data[4]:
@@ -899,9 +899,8 @@ def workToEdit():
 					categories += '''<option value="{}"{}>{}</option>
 					\n'''.format(category[0],selected,category[1])
 				categories += '''</select> '''
-				categories += '''<button type="button" '''
-				categories += '''onclick="replacePart'''
-				categories += '''('cat_selector',0,0,0)">'''
+				categories += '''<button class="add long" type="button" '''
+				categories += '''onclick="replacePart('cat_selector',0,0,0)">'''
 				categories += '''+ New category</button>'''
 				#Create form from template and append it to the AJAX response
 				html_text = render_template('editform.html', work = work,

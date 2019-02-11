@@ -1,4 +1,4 @@
-# Repertorio
+# Repertor &bull; io
 
 ## Description
 
@@ -49,6 +49,21 @@ python3 application.py
 9. You may create a new instrument, edit it if no other user lists it in their repertoire and delete them if no repertoire entry is associated with it. You may edit or delete only those instruments you created. You can find the instrument Edit / Delete button on the start page.
 10. Log out using the Logout button at the top of the page.
 11. From your profile page you have the possibility to delete your whole profile together with all your categories and repertoire entries. The instruments you created will persist, but no longer associated with your deleted profile.
+
+## HTML endpoints
+
+`/`
+
+The left pane on the start page lists all instruments in the database with the number of users listing them in their repertoire. If somebody plays the instrument, a link will point to the respective instrument page.
+The right pane lists all musicians (users with a repertoire) with their picture, the instruments they play and a link to their profile page. 
+
+`/instruments/<instrument>`
+
+The page of a specific instrument lists all musicians who have works for this instrument with their picture and a link pointing to their profile page.
+
+`/musicians/<musician_id>`
+
+The profile page of a musician shows name, picture, contact info and biography of the user, and their repertoire below, sorted by instruments and categories. The profile owner can create, edit and modify their info from this page via AJAX calls.
 
 ## Known issues
 

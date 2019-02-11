@@ -37,6 +37,10 @@ pip3 install flask oauth2client markdown
 python3 application.py
 ```
 
+## Known issues
+
+- Auto-incremented IDs in the table may cause problems on a possible backup
+
 ## Further possible developments
 
 - Handle a large number of musicians: group them into blocks according to their initials
@@ -45,4 +49,5 @@ python3 application.py
 - Change JavaScript alerts for more sophisticated alerting
 - Change pop-up windows of third-party authentication for embedded auth windows
 - Hide email addresses from spambots
+- Extend form validation
 - Polish design

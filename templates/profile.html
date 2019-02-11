@@ -48,19 +48,21 @@
 		{% endif %}
 		<img src="{{ personal_data[1] }}">
 		<div class="bio">
+			{% if not personal_data[2] and url == login_session['user_id'] %}
 			<h2>Biography</h2>
 			<span id="bio">
-			{% if not personal_data[2] and url != login_session['user_id'] %}
-				<p>No biography provided yet..</p>
-			{% elif not personal_data[2] and url == login_session['user_id'] %}
-			<button class="edit edit-contact" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Edit Bio</button>
+			<button class="add edit-contact" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Add Bio</button>
+			</span>
 			{% elif personal_data[2] %}
+			<h2>Biography</h2>
+				<span id="bio">
 				{{ nl2br(personal_data[2])|safe }}
 				{% if url == login_session['user_id'] %}
 				<button class="edit edit-contact" onclick="getForm('bio', '{{ login_session['user_id'] }}');">Edit Bio</button>
 				{% endif %}
+				</span>
 			{% endif %}
-			</span>
+			
 		</div>
 	</section>
 	<section class="repertoire">

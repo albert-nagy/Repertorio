@@ -3,7 +3,21 @@
 ## Description
 
 Repertorio is a web app where musicians can sign up and show their repertoire list along with their biography and contact info.
-This app is created for Udacity's Full Stack Web Developer nanodegree.
+This app was created for Udacity's Full Stack Web Developer nanodegree's Items Catalog project.
+It is a complex catalog system, where the users' data (works in their repertoire) is sorted into user-defined categories (genre and instruments) and the users themselves are categorized according to the instruments they list in their repertoire.
+
+## Skills used to complete this project
+
+- Python
+- Flask
+- Jinja2
+- PostgreSQL
+- AJAX
+- JavaScript
+- HTML
+- CSS
+- OAuth
+- Google & Facebook Sign In
 
 ## Installation
 
@@ -22,3 +36,13 @@ pip3 install flask oauth2client markdown
 
 python3 application.py
 ```
+
+## Further possible developments
+
+- Handle a large number of musicians: group them into blocks according to their initials
+- Make it possible for a user to change the order of their categories in repertoire
+- Add administrator role to make predefined instruments editable
+- Change JavaScript alerts for more sophisticated alerting
+- Change pop-up windows of third-party authentication for embedded auth windows
+- Hide email addresses from spambots
+- Polish design

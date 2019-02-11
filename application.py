@@ -81,7 +81,7 @@ def listRepertoire(c,musician_id):
 	GROUP BY category) cn
 	WHERE  w.creator = %s AND i.url = w.instrument AND c.id = w.category
 	AND cn.category = w.category
-	ORDER BY i.url, cn.num DESC, split_part(w.composer, ' ', 2), w.title"""
+	ORDER BY i.url, cn.num DESC, c.id, split_part(w.composer, ' ', 2), w.title"""
 	c.execute(query, (musician_id,))
 	repertoire = c.fetchall()
 	# Get the instruments from the works in the musician's repertoire list

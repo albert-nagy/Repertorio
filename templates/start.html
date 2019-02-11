@@ -3,7 +3,9 @@
 {% include "header.html" %}
 	<main>
 	{% if instrument == 0%}
+	<section id="instrument_list">
 		{% include "instruments.html" %}
+	</section>
 	{% endif %}
 	{% include "musicians.html" %}
 	</main>

@@ -332,8 +332,10 @@ def showIndex():
 	with DBconn() as c:
 		musicians = listMusicians(c,0)
 		result = listInstruments(c)
-		return render_template('start.html', result=result, musicians=musicians,
-			instrument=0, STATE=makeState(), login_session=login_session)
+		title = ''
+		return render_template('start.html', title=title, result=result,
+		musicians=musicians, instrument=0, STATE=makeState(),
+		login_session=login_session)
 
 @app.route('/instruments/<instrument>')
 def showInstrument(instrument):
@@ -342,7 +344,8 @@ def showInstrument(instrument):
 		c.execute(query,(instrument,))
 		instr_name = c.fetchone()[0]
 		musicians = listMusicians(c,instrument)
-		return render_template('start.html', musicians=musicians,
+		title = "{} | ".format(instr_name)
+		return render_template('start.html', title=title, musicians=musicians,
 		instrument=instr_name, STATE=makeState(), login_session=login_session)
 
 # JSON endpoint for a specific instrument
@@ -411,9 +414,13 @@ def showProfile(musician_id):
 		works = listRepertoire(c,musician_id)
 		# works is a tuple. Te first element is the instrument list (string),
 		# the second one is the repertoire list
-		return render_template('profile.html', personal_data=personal_data,
-		instruments=works[0], works = works[1], url=musician_id,
-		STATE=makeState(), login_session=login_session)
+		if works[0] != '':
+			title = "{} - {} | ".format(personal_data[0],works[0])
+		else:
+			title = "{} | ".format(personal_data[0])
+		return render_template('profile.html', title=title,
+		personal_data=personal_data, instruments=works[0], works = works[1],
+		url=musician_id, STATE=makeState(), login_session=login_session)
 
 # JSON endpoint for musician profile
 @app.route('/api/musicians/<musician_id>')

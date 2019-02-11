@@ -39,15 +39,25 @@ python3 application.py
 ## Usage
 
 1. Access the start page at `http://localhost:8000/` 
-2. Sign in using the Google / Facebook Sign In buttons at the top of the page to create your profile. After login you will get to your profile page wher you can start to fill in your contact info and biography.
+
+2. Sign in using the Google / Facebook Sign In buttons at the top of the page to create your profile. After login you will get to your profile page where you can start to fill in your contact info and biography.
+
 3. You can access your profile page anytime using the "My Profile" button at the top of the page.
+
 4. Return to the start page by clicking on "Repertor &bull; io".
-5. Using the "Add work to your repertoire" populate your repertoire, selecting or creating instruments and categories. Once you have works in your repertoire, your profile goes public: it will be accessible from the start and instrument pages.
+
+5. Using the "Add work to your repertoire" button, populate your repertoire, selecting or creating instruments and categories. Once you have works in your repertoire, your profile goes public: it will be accessible from the start and instrument pages.
+
 6. Your profile will be associated with the instruments you list in your repertoire.
+
 7. You may create, edit and delete works in your repertoire, assign them to a different instrument or a different category.
+
 8. You may create, edit or delete your categories. In latter case all works associated with the deleted category will be deleted as well.
+
 9. You may create a new instrument, edit it if no other user lists it in their repertoire and delete them if no repertoire entry is associated with it. You may edit or delete only those instruments you created. You can find the instrument Edit / Delete button on the start page.
+
 10. Log out using the Logout button at the top of the page.
+
 11. From your profile page you have the possibility to delete your whole profile together with all your categories and repertoire entries. The instruments you created will persist, but no longer associated with your deleted profile.
 
 ## HTML endpoints
@@ -85,7 +95,7 @@ The JSON endpoint of a musician lists the user's all info with their repertoire,
 
 ## Further possible developments
 
-- Handle a large number of musicians: group them into blocks according to their initials
+- Handle a large number of musicians: group them into blocks according to their initials, use columns to distribute them on the page
 - Make it possible for a user to change the order of their categories in repertoire
 - Make works and categories accessible and selectable for all users
 - Add administrator role to make predefined instruments editable
@@ -93,4 +103,4 @@ The JSON endpoint of a musician lists the user's all info with their repertoire,
 - Change pop-up windows of third-party authentication for embedded auth windows
 - Hide email addresses from spambots
 - Extend form validation
-- Polish design
+- Responsive design

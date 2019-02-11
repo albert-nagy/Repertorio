@@ -261,7 +261,8 @@ function delWork(work,id)
       type: 'POST',
       url: '/worktoedit?work='+work+'&id='+id,
       contentType: 'application/octet-stream; charset=utf-8',
-      success: function(result) {replacePart('add_work',result,id,1);}    
+      success: function(result) {replacePart('add_work',result,id,1);
+      window.location.href = "#repertoire";}    
   }); 
   }
 

@@ -12,18 +12,18 @@ dbname = 'rep_catalog'
 def setupDB(db, c):
     # Create tables
     c.execute("""CREATE TABLE musicians(url TEXT PRIMARY KEY, name TEXT,
-	picture TEXT, bio TEXT, email TEXT, public INT, tel TEXT, address TEXT)""")
+    picture TEXT, bio TEXT, email TEXT, public INT, tel TEXT, address TEXT)""")
 
     c.execute("""CREATE TABLE instruments(url TEXT PRIMARY KEY, name TEXT,
-	rank INT, creator TEXT)""")
+    rank INT, creator TEXT)""")
 
     c.execute("""CREATE TABLE categories(id SERIAL PRIMARY KEY, name TEXT,
-	creator TEXT REFERENCES musicians(url))""")
+    creator TEXT REFERENCES musicians(url))""")
 
     c.execute("""CREATE TABLE works(id SERIAL PRIMARY KEY, composer TEXT,
-	title TEXT, duration INT, instrument TEXT REFERENCES instruments(url),
-	creator TEXT REFERENCES musicians(url),
-	category INT REFERENCES categories(id))""")
+    title TEXT, duration INT, instrument TEXT REFERENCES instruments(url),
+    creator TEXT REFERENCES musicians(url),
+    category INT REFERENCES categories(id))""")
 
     # Fill instruments table with some predefined instruments
     instruments = [
@@ -64,7 +64,7 @@ def fillPresetData(db, c):
         reader = csv.reader(f)
         for row in reader:
             c.execute("""INSERT INTO musicians
-			VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""", row)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""", row)
 
     with open('categories.csv', 'r') as f:
         reader = csv.reader(f)
@@ -81,8 +81,8 @@ def fillPresetData(db, c):
                 i += 1
                 cat_ids.add(row[6])
             query = """INSERT INTO works (composer,title,
-			duration,instrument,creator,category)
-			VALUES (%s, %s, %s, %s, %s, %s)"""
+            duration,instrument,creator,category)
+            VALUES (%s, %s, %s, %s, %s, %s)"""
             c.execute(query,
                       (row[1], row[2], row[3], row[4], row[5], i))
     db.commit()

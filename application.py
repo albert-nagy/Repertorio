@@ -28,6 +28,8 @@ APPLICATION_NAME = "Repertorio App"
 dbname = 'rep_catalog'
 
 # Database connection for all methods using WITH
+
+
 class DBconn:
     def __enter__(self):
         self.db = psycopg2.connect(dbname=dbname)
@@ -38,6 +40,8 @@ class DBconn:
         self.db.close()
 
 # Show line breaks for new line chars stored in database
+
+
 def nl2br(text):
     return markdown(text, extensions=['nl2br'])
 
@@ -66,7 +70,7 @@ def createUser(login_session):
         data = (url, login_session['username'], login_session['email'],
                 login_session['picture'], 0)
         query = """INSERT INTO musicians (url,name,email,picture,public)
-		VALUES (%s,%s,%s,%s,%s)"""
+        VALUES (%s,%s,%s,%s,%s)"""
         c.execute(query, data)
         return url
 
@@ -84,10 +88,10 @@ def getUserID(email):
 
 def listRepertoire(c, musician_id):
     query = """SELECT w.id, w.composer, w.title, w.duration,
-	i.name, c.name, c.id, i.url
-	FROM works w, instruments i, categories c
-	WHERE  w.creator = %s AND i.url = w.instrument AND c.id = w.category
-	ORDER BY i.url, c.id, split_part(w.composer, ' ', 2), w.title"""
+    i.name, c.name, c.id, i.url
+    FROM works w, instruments i, categories c
+    WHERE  w.creator = %s AND i.url = w.instrument AND c.id = w.category
+    ORDER BY i.url, c.id, split_part(w.composer, ' ', 2), w.title"""
     c.execute(query, (musician_id,))
     repertoire = c.fetchall()
     # Get the instruments from the works in the musician's repertoire list
@@ -101,11 +105,11 @@ def listInstruments(c):
     # Get all instruments with the number of musicians
     # listing them in their repertoire
     query = """SELECT i.name, i.url, COUNT(DISTINCT m.name), i.creator
-	FROM instruments i
-	LEFT JOIN works w ON w.instrument = i.url
-	LEFT JOIN musicians m ON m.url = w.creator
-	GROUP BY i.name,i.rank,i.url
-	ORDER BY i.rank"""
+    FROM instruments i
+    LEFT JOIN works w ON w.instrument = i.url
+    LEFT JOIN musicians m ON m.url = w.creator
+    GROUP BY i.name,i.rank,i.url
+    ORDER BY i.rank"""
     c.execute(query)
     return c.fetchall()
 
@@ -116,23 +120,24 @@ def listMusicians(c, instrument):
         # If instrument is not defined, get all musicians (start page),
         # together with their instruments
         query = """SELECT m.name, m.url, m.picture,
-		STRING_AGG(DISTINCT i.name, ', ')
-		FROM musicians m, works w, instruments i
-		WHERE w.creator = m.url AND i.url = w.instrument
-		GROUP BY m.name,m.url
-		ORDER BY name"""
+        STRING_AGG(DISTINCT i.name, ', ')
+        FROM musicians m, works w, instruments i
+        WHERE w.creator = m.url AND i.url = w.instrument
+        GROUP BY m.name,m.url
+        ORDER BY name"""
         c.execute(query)
     else:
         # If instrument is specified, get musicians who play it
         query = """SELECT DISTINCT m.name, m.url, m.picture
-		FROM musicians m, works w
-		WHERE w.instrument = %s AND w.creator = m.url
-		ORDER BY name"""
+        FROM musicians m, works w
+        WHERE w.instrument = %s AND w.creator = m.url
+        ORDER BY name"""
         c.execute(query, (instrument,))
     return c.fetchall()
 
 # The OAuth mechanism is based on Udacity's OAuth 2.0 course material
 # (https://github.com/udacity/OAuth2.0)
+
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
@@ -283,6 +288,8 @@ def fbconnect():
 
 
 app.route('/gdisconnect')
+
+
 def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token:
@@ -359,6 +366,8 @@ def showIndex():
             login_session=login_session)
 
 # JSON endpoint for a start page
+
+
 @app.route('/api/')
 def indexJSON():
     with DBconn() as c:
@@ -395,14 +404,16 @@ def showInstrument(instrument):
             login_session=login_session)
 
 # JSON endpoint for a specific instrument
+
+
 @app.route('/api/instruments/<instrument>')
 def instrumentJSON(instrument):
     with DBconn() as c:
         query = """SELECT m.name, m.url, m.picture, w.id, w.composer, w.title,
-		w.duration, c.name, c.id
-		FROM musicians m, works w, categories c
-		WHERE w.instrument = %s AND w.creator = m.url AND c.id = w.category
-		ORDER BY m.url, c.id, SPLIT_PART(w.composer, ' ', 2), w.title"""
+        w.duration, c.name, c.id
+        FROM musicians m, works w, categories c
+        WHERE w.instrument = %s AND w.creator = m.url AND c.id = w.category
+        ORDER BY m.url, c.id, SPLIT_PART(w.composer, ' ', 2), w.title"""
         c.execute(query, (instrument,))
         data = c.fetchall()
         musicians_list = []
@@ -454,7 +465,7 @@ def showProfile(musician_id):
     with DBconn() as c:
         # Get profile data for the selected musician
         query = """SELECT name, picture, bio, email, public, tel, address
-		FROM musicians WHERE url = %s"""
+        FROM musicians WHERE url = %s"""
         c.execute(query, (musician_id,))
         personal_data = c.fetchone()
         # Get the repertoire list
@@ -476,12 +487,14 @@ def showProfile(musician_id):
             login_session=login_session)
 
 # JSON endpoint for musician profile
+
+
 @app.route('/api/musicians/<musician_id>')
 def profileJSON(musician_id):
     with DBconn() as c:
         # Get profile data for the selected musician
         query = """SELECT name, picture, bio, email, public, tel, address
-		FROM musicians WHERE url = %s"""
+        FROM musicians WHERE url = %s"""
         c.execute(query, (musician_id,))
         data = c.fetchone()
         # Do not show email address if it is set private
@@ -543,6 +556,8 @@ def profileJSON(musician_id):
         return jsonify(response)
 
 # Create edit forms with stored data
+
+
 @app.route('/infotoedit', methods=['POST'])
 def createForm():
     # Fill edit form with stored data
@@ -566,7 +581,7 @@ def createForm():
             elif what == 'contact':
                 with DBconn() as c:
                     query = """SELECT tel,address FROM musicians
-					WHERE url = %s"""
+                    WHERE url = %s"""
                     c.execute(query, (login_session['user_id'],))
                     response.append(c.fetchone())
             elif what == 'add_work':
@@ -576,11 +591,11 @@ def createForm():
                     instruments = ''
                     categories = ''
                     query = """SELECT i.url, COUNT(*) AS num
-					FROM instruments i, works w, musicians m
-					WHERE  m.url = %s AND m.url = w.creator
-					AND w.instrument = i.url
-					GROUP BY i.url
-					ORDER BY num DESC"""
+                    FROM instruments i, works w, musicians m
+                    WHERE  m.url = %s AND m.url = w.creator
+                    AND w.instrument = i.url
+                    GROUP BY i.url
+                    ORDER BY num DESC"""
                     c.execute(query, (login_session['user_id'],))
                     main_instrument = c.fetchone()
                     # Get options for selects: first get all instruments
@@ -595,26 +610,28 @@ def createForm():
                                 selected = ''
                         except TypeError:
                             selected = ''
-                        instruments += '<option value="{}"{}>{}</option>\n'.format(
+                        instruments += '<option value='
+                        instruments += '"{}"{}>{}</option>\n'.format(
                             instrument[0], selected, instrument[1])
                     # Then get all categories created by the user
                     query = """SELECT id, name FROM categories
-					WHERE creator = %s"""
+                    WHERE creator = %s"""
                     c.execute(query, (login_session['user_id'],))
                     result = c.fetchall()
                     # If no such category found, create input field for a new
                     # one
                     if len(result) == 0:
-                        categories = '''<strong>Create Category: </strong><br />
-						<input type="text" name="category" value="" />'''
+                        categories = '''<strong>Create Category: </strong>
+                        <br />
+                        <input type="text" name="category" value="" />'''
                     else:
                         # If there are already categories created by the user,
                         # create a select for them
                         categories = '''<strong>Category: </strong><br />
-						<select id="category">\n'''
+                        <select id="category">\n'''
                         for category in result:
                             categories += '''<option value="{}">{}</option>
-							\n'''.format(category[0], category[1])
+                            \n'''.format(category[0], category[1])
                         categories += '''</select> '''
                         categories += '''<button class="add long" '''
                         categories += '''type="button" onclick="replacePart'''
@@ -655,6 +672,8 @@ def createForm():
     return json.dumps(response)
 
 # Edit informations
+
+
 @app.route('/edit', methods=['POST'])
 def editInfo():
     action = request.args.get('action')
@@ -672,7 +691,9 @@ def editInfo():
                     # If it is the user's own bio, store it in the DB
                     text = request.args.get('text')
                     with DBconn() as c:
-                        query = """UPDATE musicians SET bio = %s WHERE url = %s"""
+                        query = """UPDATE musicians
+                        SET bio = %s
+                        WHERE url = %s"""
                         c.execute(query, (text, login_session['user_id']))
 
                 # Replace form with the stored bio
@@ -693,14 +714,14 @@ def editInfo():
                     address = request.args.get('address')
                     with DBconn() as c:
                         query = """UPDATE musicians SET tel = %s, address = %s
-						WHERE url = %s"""
+                        WHERE url = %s"""
                         c.execute(query,
                                   (phone, address, login_session['user_id']))
 
                 # Replace form with the stored contact info
                 with DBconn() as c:
                     query = """SELECT tel,address FROM musicians
-					WHERE url = %s"""
+                    WHERE url = %s"""
                     c.execute(query, (login_session['user_id'],))
                     response.append(c.fetchone())
 
@@ -718,7 +739,7 @@ def editInfo():
                         public = 0
                         button_text = "Set Public"
                     query = """UPDATE musicians SET public = %s
-					WHERE url = %s"""
+                    WHERE url = %s"""
                     # Update email privacy in DB and return new button text
                     c.execute(query, (public, login_session['user_id']))
                     response.append(button_text)
@@ -756,15 +777,15 @@ def editInfo():
                             # If not, check if an instrument exists
                             # with the new ID
                             query = """SELECT COUNT(*) FROM instruments
-							WHERE url = %s"""
+                            WHERE url = %s"""
                             c.execute(query, (new_url,))
                             existing_instrument = c.fetchone()
                             num = existing_instrument[0]
                         if num == 0:
-                            # Check if someone else lists the instrument in their
-                            # repertoire
+                            # Check if someone else lists the instrument
+                            # in their repertoire
                             query = """SELECT COUNT (*) FROM works
-							WHERE instrument = %s AND creator != %s"""
+                            WHERE instrument = %s AND creator != %s"""
                             c.execute(query, (old_url, user))
                             other_users = c.fetchone()
                             # Update instrument in DB only if no other user
@@ -773,36 +794,36 @@ def editInfo():
                                 # Check if there is a repertoire entry at all
                                 # and get instrument's place in the list
                                 query = """SELECT COUNT(w.id), i.rank
-								FROM works w, instruments i
-								WHERE w.instrument = %s
-								AND i.url = w.instrument
-								GROUP BY w.instrument,i.rank"""
+                                FROM works w, instruments i
+                                WHERE w.instrument = %s
+                                AND i.url = w.instrument
+                                GROUP BY w.instrument,i.rank"""
                                 c.execute(query, (old_url,))
                                 inst_result = c. fetchone()
-                                # If there are works in the repertoire with this
-                                # instrument, prevent IntegrityError caused by
-                                # existing foreign key constraint by creating a
-                                # new instrument, updating the works and deleting
-                                # the old one
+                                # If there are works in the repertoire with
+                                # this instrument, prevent IntegrityError
+                                # caused by existing foreign key constraint
+                                # by creating a new instrument, updating the
+                                # works and deleting the old one
                                 if inst_result[0] > 0:
                                     query = """INSERT INTO instruments
-									(url,name,rank,creator)
-									VALUES (%s,%s,%s,%s)"""
+                                    (url,name,rank,creator)
+                                    VALUES (%s,%s,%s,%s)"""
                                     c.execute(query, (new_url, name,
                                                       inst_result[1], user))
                                     query = """UPDATE works
-									SET instrument = %s
-									WHERE instrument = %s"""
+                                    SET instrument = %s
+                                    WHERE instrument = %s"""
                                     c.execute(query, (new_url, old_url))
                                     query = """DELETE FROM instruments
-									WHERE url = %s AND creator = %s"""
+                                    WHERE url = %s AND creator = %s"""
                                     c.execute(query, (old_url, user))
                                 # If no foreign key constraint present,
                                 # just update the instrument
                                 else:
                                     query = """UPDATE instruments
-									SET url = %s, name = %s
-									WHERE url = %s AND creator = %s"""
+                                    SET url = %s, name = %s
+                                    WHERE url = %s AND creator = %s"""
                                     c.execute(query,
                                               (new_url, name, old_url, user))
                             else:
@@ -811,7 +832,8 @@ def editInfo():
                             err_code = 1
                     result = listInstruments(c)
                     html_text = render_template(
-                        'instruments.html', result=result, login_session=login_session)
+                        'instruments.html',
+                        result=result, login_session=login_session)
                     response.append((html_text, err_code))
         else:
             response.append(0)
@@ -822,6 +844,8 @@ def editInfo():
     return json.dumps(response)
 
 # Add work to repertoire
+
+
 @app.route('/add_work', methods=['POST'])
 def addWork():
     composer = request.args.get('composer')
@@ -846,25 +870,25 @@ def addWork():
                 if num == 0:
                     # If the instrument is not found in the DB, create a new
                     # entry for it. In this case the argument 'instrument' is
-                    # a normal name. We have to slugify it for the instrument id
-                    # and assign a rank to it
+                    # a normal name. We have to slugify it for the instrument
+                    # idand assign a rank to it
                     query = 'SELECT MAX(rank) FROM instruments'
                     c.execute(query)
                     rank = c.fetchone()[0] + 1
                     query = '''INSERT INTO instruments (url,name,rank,creator)
-					VALUES (%s,%s,%s,%s)'''
+                    VALUES (%s,%s,%s,%s)'''
                     url = slugify(instrument)
                     c.execute(query, (url, instrument, rank, user))
                 else:
-                    # If found, use the instrument variable as instrument id for
-                    # further queries
+                    # If found, use the instrument variable as instrument id
+                    # for further queries
                     url = instrument
                 # If the category variable is numeric, it is already in the DB,
                 # the variable contains the category ID.
                 # If not, create a new category in the database.
                 if not category.isnumeric():
                     query = '''INSERT INTO categories (name,creator)
-					VALUES (%s,%s)'''
+                    VALUES (%s,%s)'''
                     c.execute(query, (category, user))
                     # After inserting, use the ID of the new record as category
                     # ID
@@ -875,19 +899,21 @@ def addWork():
                 if not request.args.get('work'):
                     # Create the new Work entry using all data.
                     query = '''INSERT INTO
-					works (composer,title,duration,instrument,creator,category)
-					VALUES (%s,%s,%s,%s,%s,%s)'''
+                    works (composer,title,duration,instrument,creator,category)
+                    VALUES (%s,%s,%s,%s,%s,%s)'''
                     c.execute(
-                        query, (composer, title, duration, url, user, category))
+                        query,
+                        (composer, title, duration, url, user, category))
                 # If there is a work ID, update an existing work
                 else:
                     work = request.args.get('work')
                     query = '''UPDATE works
-					SET composer = %s, title = %s, duration = %s,
-					instrument = %s, creator = %s, category = %s
-					WHERE id = %s'''
+                    SET composer = %s, title = %s, duration = %s,
+                    instrument = %s, creator = %s, category = %s
+                    WHERE id = %s'''
                     c.execute(
-                        query, (composer, title, duration, url, user, category, work))
+                        query,
+                        (composer, title, duration, url, user, category, work))
                 # Finally generate the repertoire list with the new element
                 works = listRepertoire(c, user)
                 html_text = render_template(
@@ -906,6 +932,8 @@ def addWork():
     return json.dumps(response)
 
 # Delete work from repertoire
+
+
 @app.route('/del_work', methods=['POST'])
 def delWork():
     work = request.args.get('work')
@@ -938,6 +966,8 @@ def delWork():
     return json.dumps(response)
 
 # Create form to edit work in repertoire
+
+
 @app.route('/worktoedit', methods=['POST'])
 def workToEdit():
     work = request.args.get('work')
@@ -951,8 +981,9 @@ def workToEdit():
             with DBconn() as c:
                 # Get the selected work's data to fill out the form
                 query = '''SELECT w.composer, w.title, w.duration,
-				i.url, c.id FROM works w, instruments i, categories c
-				WHERE w.id = %s AND i.url = w.instrument AND w.category = c.id'''
+                i.url, c.id FROM works w, instruments i, categories c
+                WHERE w.id = %s AND i.url = w.instrument
+                AND w.category = c.id'''
                 c.execute(query, (work,))
                 work_data = c.fetchone()
                 # Define variables for dropdown lists
@@ -972,23 +1003,24 @@ def workToEdit():
                         instrument[0], selected, instrument[1])
                 # Then get all categories created by the user
                 query = """SELECT id, name FROM categories
-				WHERE creator = %s"""
+                WHERE creator = %s"""
                 c.execute(query, (login_session['user_id'],))
                 result = c.fetchall()
                 # and create a dropdown list from them.
                 # Mark the work's category as selected.
                 categories = '''<strong>Category: </strong><br />
-				<select id="category">\n'''
+                <select id="category">\n'''
                 for category in result:
                     if category[0] == work_data[4]:
                         selected = ' selected="selected"'
                     else:
                         selected = ''
                     categories += '''<option value="{}"{}>{}</option>
-					\n'''.format(category[0], selected, category[1])
+                    \n'''.format(category[0], selected, category[1])
                 categories += '''</select> '''
                 categories += '''<button class="add long" type="button" '''
-                categories += '''onclick="replacePart('cat_selector',0,0,0)">'''
+                categories += '''onclick="replacePart'''
+                categories += '''('cat_selector',0,0,0)">'''
                 categories += '''+ New category</button>'''
                 # Create form from template and append it to the AJAX response
                 html_text = render_template(
@@ -1008,6 +1040,8 @@ def workToEdit():
     return json.dumps(response)
 
 # Delete category
+
+
 @app.route('/del_cat', methods=['POST'])
 def delCat():
     category = request.args.get('category')
@@ -1043,6 +1077,8 @@ def delCat():
     return json.dumps(response)
 
 # Delete instrument
+
+
 @app.route('/del_instr', methods=['POST'])
 def delInstr():
     instrument = request.args.get('instrument')
@@ -1077,6 +1113,8 @@ def delInstr():
     return json.dumps(response)
 
 # Delete user profile
+
+
 @app.route('/del_profile', methods=['POST'])
 def delProfile():
     user = request.args.get('id')
@@ -1094,7 +1132,8 @@ def delProfile():
                 query = 'DELETE FROM categories WHERE creator = %s'
                 c.execute(query, (user,))
                 # Delete the creator field from instruments created by the user
-                query = "UPDATE instruments SET creator = '' WHERE creator = %s"
+                query = """UPDATE instruments SET creator = ''
+                WHERE creator = %s"""
                 c.execute(query, (user,))
                 # Delete the profile itself
                 query = 'DELETE FROM musicians WHERE url = %s'

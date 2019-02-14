@@ -91,12 +91,13 @@ function signInCallback(authResult) {
 		<script type="text/javascript">
 function Logout()
 	{
-	page = window.location;
+	page = window.location + '';
 	$.ajax({
       type: 'GET',
       url: '/disconnect',
       success: function(result) {
-      window.location.href = page;}
+      target = page.split("#");
+      window.location.href = target[0];}
 		});	
 	}
 		</script>

@@ -370,6 +370,7 @@ def showIndex():
             result=result,
             musicians=musicians,
             instrument=0,
+            CLIENT_ID=CLIENT_ID,
             STATE=makeState(),
             login_session=login_session)
 
@@ -408,6 +409,7 @@ def showInstrument(instrument):
             title=title,
             musicians=musicians,
             instrument=instr_name,
+            CLIENT_ID=CLIENT_ID,
             STATE=makeState(),
             login_session=login_session)
 
@@ -491,6 +493,7 @@ def showProfile(musician_id):
             instruments=works[0],
             works=works[1],
             url=musician_id,
+            CLIENT_ID=CLIENT_ID,
             STATE=makeState(),
             login_session=login_session)
 

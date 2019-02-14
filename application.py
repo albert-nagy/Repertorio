@@ -1,8 +1,16 @@
 #!/usr/bin/env python3
 
 import psycopg2
-from flask import Flask, render_template, request, redirect, jsonify
-from flask import url_for, flash, jsonify, session as login_session
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    jsonify,
+    url_for,
+    flash,
+    jsonify,
+    session as login_session)
 
 import random
 import string

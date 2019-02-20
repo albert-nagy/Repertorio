@@ -103,7 +103,8 @@ def fillPresetData(db, c):
 
 # Check if database exists
 try:
-    db = psycopg2.connect(dbname=dbname, user='catalog', password='XXX')
+    db = psycopg2.connect(host='localhost', dbname=dbname, user='catalog',
+        password='XXX')
 except psycopg2.OperationalError:
     # If not, create database
     db = psycopg2.connect(dbname=DEFAULT_DB)

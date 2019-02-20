@@ -40,7 +40,8 @@ dbname = 'catalog'
 
 class DBconn:
     def __enter__(self):
-        self.db = psycopg2.connect(dbname=dbname, user='catalog', password='XXX')
+        self.db = psycopg2.connect(host='localhost', dbname=dbname,
+            user='catalog', password='XXX')
         return self.db.cursor()
 
     def __exit__(self, type, value, traceback):

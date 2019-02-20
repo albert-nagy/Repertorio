@@ -3,10 +3,10 @@ import csv
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from slugify import slugify
 
-# Substitute 'vagrant' in next line with the name of your default database
-DEFAULT_DB = 'vagrant'
+# Substitute 'postgres' in next line with the name of your default database
+DEFAULT_DB = 'postgres'
 # This will be the name of the new database:
-dbname = 'rep_catalog'
+dbname = 'catalog'
 
 
 def setupDB(db, c):
@@ -103,7 +103,7 @@ def fillPresetData(db, c):
 
 # Check if database exists
 try:
-    db = psycopg2.connect(dbname=dbname)
+    db = psycopg2.connect(dbname=dbname, user='catalog', password='XXX')
 except psycopg2.OperationalError:
     # If not, create database
     db = psycopg2.connect(dbname=DEFAULT_DB)

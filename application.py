@@ -33,14 +33,14 @@ CLIENT_ID = json.loads(
     open('google_secret.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Repertorio App"
 
-dbname = 'rep_catalog'
+dbname = 'catalog'
 
 # Database connection for all methods using WITH
 
 
 class DBconn:
     def __enter__(self):
-        self.db = psycopg2.connect(dbname=dbname)
+        self.db = psycopg2.connect(dbname=dbname, user='catalog', password='XXX')
         return self.db.cursor()
 
     def __exit__(self, type, value, traceback):

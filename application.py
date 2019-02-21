@@ -26,6 +26,7 @@ from slugify import slugify
 from markdown import markdown
 
 app = Flask(__name__)
+app.secret_key = 'super_secret_key'
 # Load Jinja's "do" extension for operations in templates - like list.append()
 app.jinja_env.add_extension('jinja2.ext.do')
 
@@ -1163,6 +1164,5 @@ def delProfile():
 
 
 if __name__ == '__main__':
-    app.secret_key = 'super_secret_key'
     app.debug = True
     app.run(host='0.0.0.0', port=8000)

@@ -30,8 +30,11 @@ app.secret_key = 'super_secret_key'
 # Load Jinja's "do" extension for operations in templates - like list.append()
 app.jinja_env.add_extension('jinja2.ext.do')
 
+document_root = "{}/".format(app.root_path)
+
 CLIENT_ID = json.loads(
-    open('google_secret.json', 'r').read())['web']['client_id']
+    open('{}google_secret.json'.format(
+        document_root), 'r').read())['web']['client_id']
 APPLICATION_NAME = "Repertorio App"
 
 dbname = 'catalog'
@@ -161,7 +164,8 @@ def gconnect():
 
     try:
         # Upgrade the authorization code into a credentials object
-        oauth_flow = flow_from_clientsecrets('google_secret.json', scope='')
+        oauth_flow = flow_from_clientsecrets('{}google_secret.json'.format(
+            document_root), scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:
@@ -246,10 +250,12 @@ def fbconnect():
         return response
     access_token = request.data.decode()
 
-    app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
+    app_id = json.loads(open('{}fb_client_secrets.json'.format(
+        document_root), 'r').read())[
         'web']['app_id']
     app_secret = json.loads(
-        open('fb_client_secrets.json', 'r').read())['web']['app_secret']
+        open('{}fb_client_secrets.json'.format(
+        document_root), 'r').read())['web']['app_secret']
     url = 'https://graph.facebook.com/oauth/access_token?'
     url += 'grant_type=fb_exchange_token'
     url += '&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (

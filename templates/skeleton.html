@@ -3,9 +3,29 @@
 <head>
   <link rel=stylesheet type=text/css href="/static/styles.css">
   <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
-	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-	<script type="text/javascript" src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
-  <script>var page = window.location;</script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+
+  <script>
+  {% if 'username' not in login_session %}
+  function start() {
+  gapi.load('auth2', function() {
+    auth2 = gapi.auth2.init({
+      client_id: '{{CLIENT_ID}}',
+      scope: 'profile'
+    });
+  });
+  gapi.signin2.render('signinButton', {
+        'width': 200,
+        'height': 28,
+        'longtitle': true,
+        'theme': 'light'
+      });
+  }
+{% endif %}
+  var page = window.location;
+
+</script>
   {% if 'username' in login_session %}
   <script type="text/javascript" src="/static/js/editor.js"></script>
   {% endif %}

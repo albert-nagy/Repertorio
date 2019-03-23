@@ -1,44 +1,41 @@
 <header>
 <a id="site-header" href="/">Repertor &bull; io</a>
 {% if 'username' not in login_session %}
-<div id="signinButton">
-          <span class="g-signin"
-            data-longtitle="true"
-            data-scope="openid email profile"
-            data-theme="light"
-            data-clientid="{{CLIENT_ID}}"
-            data-redirecturi="postmessage"
-            data-accesstype="offline"
-            data-cookiepolicy="single_host_origin"
-            data-callback="signInCallback"
-            data-approvalprompt="force">
-          </span>
-        </div>
+<div id="signinButton"></div>
 
 <script>
 
-
-function signInCallback(authResult) {
-  if (authResult['code']) {
-    // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
-    $.ajax({
-      type: 'POST',
-      url: '/gconnect?state={{STATE}}',
-      processData: false,
-      data: authResult['code'],
-      contentType: 'application/octet-stream; charset=utf-8',
-      success: function(result) {
+  $('#signinButton').click(function() {
+    function signInCallback(authResult){
+      if (authResult['code']){
+        
+        $.ajax({
+          type: 'POST',
+          url: '/gconnect?state={{STATE}}',
+          headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+          },
+          contentType: 'application/octet-stream; charset=utf-8',
+          success: function(result) {
         // Handle or verify the server response if necessary.
          if (result) 
-        	window.location.href = result;
+          window.location.href = result;
         else 
-      		alert('Login failed');
+          alert('Login failed');
+        },
+          processData:false,
+          data:authResult['code']
+        });
+      } else{
+        // handle error
+        console.log('There was an error: ' + authResult['error']);
+        $('#result').html('Failed to make a server-side call. Check your configuration and console.');
       }
-      
-  }); } }
+    }
+    auth2.grantOfflineAccess().then(signInCallback);
+  });
+
 </script>
-
-
 
 	<script>
   window.fbAsyncInit = function() {

@@ -44,7 +44,7 @@ header button, #my-profile, #logout
 		font-weight: bold;}
 
 #signinButton {float: right;
-		margin-top: 4px;
+		margin-top: 6px;
 		right: 0;}
 
 .fb-login-button {float: right;

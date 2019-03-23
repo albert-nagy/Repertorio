@@ -2,6 +2,7 @@ import psycopg2
 import csv
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from slugify import slugify
+from dbpass import db_password
 
 # Substitute 'postgres' in next line with the name of your default database
 DEFAULT_DB = 'postgres'
@@ -100,20 +101,9 @@ def fillPresetData(db, c):
     result.append(c.fetchone()[0])
     return result
 
+db = psycopg2.connect(host='localhost', dbname=dbname, user='catalog',
+    password=db_password)
 
-# Check if database exists
-try:
-    db = psycopg2.connect(host='localhost', dbname=dbname, user='catalog',
-        password='XXX')
-except psycopg2.OperationalError:
-    # If not, create database
-    db = psycopg2.connect(dbname=DEFAULT_DB)
-    db.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-    c = db.cursor()
-    c.execute('CREATE DATABASE ' + dbname)
-    db.commit()
-    db.close()
-    db = psycopg2.connect(dbname=dbname)
 c = db.cursor()
 # Populate new DB and report number of initial inserts
 num = setupDB(db, c)

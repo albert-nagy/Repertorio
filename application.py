@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from dbpass import db_password
 
 import psycopg2
 from flask import (
@@ -45,7 +46,7 @@ dbname = 'catalog'
 class DBconn:
     def __enter__(self):
         self.db = psycopg2.connect(host='localhost', dbname=dbname,
-            user='catalog', password='XXX')
+            user='catalog', password=db_password)
         return self.db.cursor()
 
     def __exit__(self, type, value, traceback):

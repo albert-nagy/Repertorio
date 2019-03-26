@@ -1049,38 +1049,30 @@ def workToEdit():
 
 
 @app.route('/del_cat', methods=['POST'])
-def delCat():
+@authorizeUser
+def delCat(user,request):
     category = request.args.get('category')
-    user = request.args.get('id')
-    response = []
-    # If the user logged in is the owner of the profile, the first part of the
-    # response will be 1, otherwise 0. The second part will contain the data.
-    if 'user_id' in login_session:
-        if user == login_session['user_id']:
-            response.append(1)
-            with DBconn() as c:
-                # Delete all works from repertoire with this category ID
-                query = 'DELETE FROM works WHERE category = %s'
-                c.execute(query, (category,))
-                # Delete the category itself
-                query = 'DELETE FROM categories WHERE id = %s'
-                c.execute(query, (category,))
-                # Finally generate the repertoire list with the new element
-                works = listRepertoire(c, user)
-                html_text = render_template(
-                    'repertoire.html',
-                    works=works[1],
-                    url=user,
-                    login_session=login_session)
-                response_data = (works[0], html_text)
-                response.append(response_data)
-        else:
-            response.append(0)
-            flash("You are not authorized to perform this operation!")
-    else:
-        response.append(0)
-        flash("You are not logged in!")
-    return json.dumps(response)
+    
+    with DBconn() as c:
+        # Delete all works from repertoire with this category ID
+        query = '''DELETE FROM works 
+        WHERE category = %s 
+        AND creator = %s'''
+        c.execute(query, (category,user))
+        # Delete the category itself
+        query = '''DELETE FROM categories 
+        WHERE id = %s 
+        AND creator = %s'''
+        c.execute(query, (category,user))
+        # Finally generate the repertoire list with the new element
+        works = listRepertoire(c, user)
+        html_text = render_template(
+            'repertoire.html',
+            works=works[1],
+            url=user,
+            login_session=login_session)
+        response_data = (works[0], html_text)
+        return response_data
 
 # Delete instrument
 

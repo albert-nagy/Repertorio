@@ -26,6 +26,8 @@ import requests
 from slugify import slugify
 from markdown import markdown
 
+from functools import wraps
+
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
 # Load Jinja's "do" extension for operations in templates - like list.append()
@@ -63,6 +65,29 @@ def nl2br(text):
 # Make nl2br accessible from templates
 app.jinja_env.globals.update(nl2br=nl2br)
 
+# Decorator function for checking if the user is
+# authorized to perform the requested modifications
+
+def authorizeUser(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        # If the user logged in is the owner of the profile,
+        # the first part of the response will be 1, otherwise 0.
+        # The second part will contain the data.
+        user=request.args.get('id')
+        response = []
+        if 'user_id' in login_session:
+            if user == login_session['user_id']:
+                response.append(1)
+                response.append(fn(user,request))
+            else:
+                response.append(0)
+                flash("You are not authorized to perform this operation!")
+        else:
+            response.append(0)
+            flash("You are not logged in!")
+        return json.dumps(response)
+    return wrapper
 
 def makeState():
     state = ''
@@ -304,9 +329,7 @@ def fbconnect():
     return url_for('showProfile', musician_id=login_session['user_id'])
 
 
-app.route('/gdisconnect')
-
-
+@app.route('/gdisconnect')
 def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token:
@@ -867,123 +890,100 @@ def editInfo():
 
 
 @app.route('/add_work', methods=['POST'])
-def addWork():
+@authorizeUser
+def addWork(user,request):
     composer = request.args.get('composer')
     title = request.args.get('title')
     duration = request.args.get('duration')
     instrument = request.args.get('instrument')
     category = request.args.get('category')
-    user = request.args.get('id')
-    response = []
-    # If the user logged in is the owner of the profile, the first part of the
-    # response will be 1, otherwise 0. The second part will contain the data.
-    if 'user_id' in login_session:
-        if user == login_session['user_id']:
-            response.append(1)
-            with DBconn() as c:
-                # Check if instrument exists or new instrument should be added
-                # If it already exists, the argument 'instrument' will be the
-                # slugified name and the next query will find it
-                query = 'SELECT COUNT(*) FROM instruments WHERE url = %s'
-                c.execute(query, (instrument,))
-                num = c.fetchone()[0]
-                if num == 0:
-                    # If the instrument is not found in the DB, create a new
-                    # entry for it. In this case the argument 'instrument' is
-                    # a normal name. We have to slugify it for the instrument
-                    # idand assign a rank to it
-                    query = 'SELECT MAX(rank) FROM instruments'
-                    c.execute(query)
-                    rank = c.fetchone()[0] + 1
-                    query = '''INSERT INTO instruments (url,name,rank,creator)
-                    VALUES (%s,%s,%s,%s)'''
-                    url = slugify(instrument)
-                    c.execute(query, (url, instrument, rank, user))
-                else:
-                    # If found, use the instrument variable as instrument id
-                    # for further queries
-                    url = instrument
-                # If the category variable is numeric, it is already in the DB,
-                # the variable contains the category ID.
-                # If not, create a new category in the database.
-                if not category.isnumeric():
-                    query = '''INSERT INTO categories (name,creator)
-                    VALUES (%s,%s)'''
-                    c.execute(query, (category, user))
-                    # After inserting, use the ID of the new record as category
-                    # ID
-                    query = 'SELECT id FROM categories WHERE name = %s'
-                    c.execute(query, (category,))
-                    category = c.fetchone()[0]
-                # If no work ID passed, a new work must be added to the DB
-                if not request.args.get('work'):
-                    # Create the new Work entry using all data.
-                    query = '''INSERT INTO
-                    works (composer,title,duration,instrument,creator,category)
-                    VALUES (%s,%s,%s,%s,%s,%s)'''
-                    c.execute(
-                        query,
-                        (composer, title, duration, url, user, category))
-                # If there is a work ID, update an existing work
-                else:
-                    work = request.args.get('work')
-                    query = '''UPDATE works
-                    SET composer = %s, title = %s, duration = %s,
-                    instrument = %s, creator = %s, category = %s
-                    WHERE id = %s'''
-                    c.execute(
-                        query,
-                        (composer, title, duration, url, user, category, work))
-                # Finally generate the repertoire list with the new element
-                works = listRepertoire(c, user)
-                html_text = render_template(
-                    'repertoire.html',
-                    works=works[1],
-                    url=user,
-                    login_session=login_session)
-                response_data = (works[0], html_text)
-                response.append(response_data)
+
+    with DBconn() as c:
+        # Check if instrument exists or new instrument should be added
+        # If it already exists, the argument 'instrument' will be the
+        # slugified name and the next query will find it
+        query = 'SELECT COUNT(*) FROM instruments WHERE url = %s'
+        c.execute(query, (instrument,))
+        num = c.fetchone()[0]
+        if num == 0:
+            # If the instrument is not found in the DB, create a new
+            # entry for it. In this case the argument 'instrument' is
+            # a normal name. We have to slugify it for the instrument
+            # idand assign a rank to it
+            query = 'SELECT MAX(rank) FROM instruments'
+            c.execute(query)
+            rank = c.fetchone()[0] + 1
+            query = '''INSERT INTO instruments (url,name,rank,creator)
+            VALUES (%s,%s,%s,%s)'''
+            url = slugify(instrument)
+            c.execute(query, (url, instrument, rank, user))
         else:
-            response.append(0)
-            flash("You are not authorized to perform this operation!")
-    else:
-        response.append(0)
-        flash("You are not logged in!")
-    return json.dumps(response)
+            # If found, use the instrument variable as instrument id
+            # for further queries
+            url = instrument
+        # If the category variable is numeric, it is already in the DB,
+        # the variable contains the category ID.
+        # If not, create a new category in the database.
+        if not category.isnumeric():
+            query = '''INSERT INTO categories (name,creator)
+            VALUES (%s,%s)'''
+            c.execute(query, (category, user))
+            # After inserting, use the ID of the new record as category
+            # ID
+            query = 'SELECT id FROM categories WHERE name = %s'
+            c.execute(query, (category,))
+            category = c.fetchone()[0]
+        # If no work ID passed, a new work must be added to the DB
+        if not request.args.get('work'):
+            # Create the new Work entry using all data.
+            query = '''INSERT INTO
+            works (composer,title,duration,instrument,creator,category)
+            VALUES (%s,%s,%s,%s,%s,%s)'''
+            c.execute(
+                query,
+                (composer, title, duration, url, user, category))
+        # If there is a work ID, update an existing work
+        else:
+            work = request.args.get('work')
+            query = '''UPDATE works
+            SET composer = %s, title = %s, duration = %s,
+            instrument = %s, creator = %s, category = %s
+            WHERE id = %s'''
+            c.execute(
+                query,
+                (composer, title, duration, url, user, category, work))
+        # Finally generate the repertoire list with the new element
+        works = listRepertoire(c, user)
+        html_text = render_template(
+            'repertoire.html',
+            works=works[1],
+            url=user,
+            login_session=login_session)
+        response_data = (works[0], html_text)
+        return response_data
 
 # Delete work from repertoire
 
 
 @app.route('/del_work', methods=['POST'])
-def delWork():
+@authorizeUser
+def delWork(user,request):
     work = request.args.get('work')
-    user = request.args.get('id')
-    response = []
-    # If the user logged in is the owner of the profile, the first part of the
-    # response will be 1, otherwise 0. The second part will contain the data.
-    if 'user_id' in login_session:
-        if user == login_session['user_id']:
-            response.append(1)
-            with DBconn() as c:
-                # Delete work from the repertoire by its ID
-                query = 'DELETE FROM works WHERE id = %s'
-                c.execute(query, (work,))
-                # Finally generate the repertoire list with the new element
-                works = listRepertoire(c, user)
-                html_text = render_template(
-                    'repertoire.html',
-                    works=works[1],
-                    url=user,
-                    login_session=login_session)
-                response_data = (works[0], html_text)
-                response.append(response_data)
-        else:
-            response.append(0)
-            flash("You are not authorized to perform this operation!")
-    else:
-        response.append(0)
-        flash("You are not logged in!")
-    return json.dumps(response)
+
+    with DBconn() as c:
+        # Delete work from the repertoire by its ID
+        query = 'DELETE FROM works WHERE id = %s'
+        c.execute(query, (work,))
+        # Finally generate the repertoire list with the new element
+        works = listRepertoire(c, user)
+        html_text = render_template(
+            'repertoire.html',
+            works=works[1],
+            url=user,
+            login_session=login_session)
+        response_data = (works[0], html_text)
+        return response_data
+
 
 # Create form to edit work in repertoire
 

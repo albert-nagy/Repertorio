@@ -23,6 +23,8 @@ It is a complex catalog system, where the users' data (works in their repertoire
 
 The application  was created under Python 3.5. 
 Install the Psycopg2-binary and Slugify modules, then run database_setup.py to create the required database with tables and some predefined data. The database setup will require the CSV files to populate the DB with demo data.
+Create a database called 'catalog' with role 'catalog' and a custom password.
+Create a Python file called 'dbpass.py' and add a variable called 'db_password' containing the password.
 
 ```bash
 pip3 install psycopg2-binary python-slugify

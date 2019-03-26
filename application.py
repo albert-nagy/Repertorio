@@ -1092,38 +1092,25 @@ def delInstr(user,request):
 
 
 @app.route('/del_profile', methods=['POST'])
-def delProfile():
-    user = request.args.get('id')
-    response = []
-    # If the user logged in is the owner of the profile, the first part of the
-    # response will be 1, otherwise 0. The second part will contain the data.
-    if 'user_id' in login_session:
-        if user == login_session['user_id']:
-            response.append(1)
-            with DBconn() as c:
-                # Delete all works from repertoire with this user ID
-                query = 'DELETE FROM works WHERE creator = %s'
-                c.execute(query, (user,))
-                # Delete categories created by the user
-                query = 'DELETE FROM categories WHERE creator = %s'
-                c.execute(query, (user,))
-                # Delete the creator field from instruments created by the user
-                query = """UPDATE instruments SET creator = ''
-                WHERE creator = %s"""
-                c.execute(query, (user,))
-                # Delete the profile itself
-                query = 'DELETE FROM musicians WHERE url = %s'
-                c.execute(query, (user,))
-                disconnect(1)
-                response.append(1)
-                flash("Profile successfully deleted!")
-        else:
-            response.append(0)
-            flash("You are not authorized to perform this operation!")
-    else:
-        response.append(0)
-        flash("You are not logged in!")
-    return json.dumps(response)
+@authorizeUser
+def delProfile(user,request):
+    with DBconn() as c:
+        # Delete all works from repertoire with this user ID
+        query = 'DELETE FROM works WHERE creator = %s'
+        c.execute(query, (user,))
+        # Delete categories created by the user
+        query = 'DELETE FROM categories WHERE creator = %s'
+        c.execute(query, (user,))
+        # Delete the creator field from instruments created by the user
+        query = """UPDATE instruments SET creator = ''
+        WHERE creator = %s"""
+        c.execute(query, (user,))
+        # Delete the profile itself
+        query = 'DELETE FROM musicians WHERE url = %s'
+        c.execute(query, (user,))
+        disconnect(1)
+        return 1
+        flash("Profile successfully deleted!")
 
 
 if __name__ == '__main__':

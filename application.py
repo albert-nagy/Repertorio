@@ -977,75 +977,63 @@ def delWork(user,request):
 
 
 @app.route('/worktoedit', methods=['POST'])
-def workToEdit():
+@authorizeUser
+def workToEdit(user,request):
     work = request.args.get('work')
-    user = request.args.get('id')
-    response = []
-    # If the user logged in is the owner of the profile, the first part of the
-    # response will be 1, otherwise 0. The second part will contain the data.
-    if 'user_id' in login_session:
-        if user == login_session['user_id']:
-            response.append(1)
-            with DBconn() as c:
-                # Get the selected work's data to fill out the form
-                query = '''SELECT w.composer, w.title, w.duration,
-                i.url, c.id FROM works w, instruments i, categories c
-                WHERE w.id = %s AND i.url = w.instrument
-                AND w.category = c.id'''
-                c.execute(query, (work,))
-                work_data = c.fetchone()
-                # Define variables for dropdown lists
-                instruments = ''
-                categories = ''
-                # Get options for selects: first get all instruments
-                # and create <option> tags.
-                # Mark the work's instrument as selected.
-                query = "SELECT url, name FROM instruments ORDER BY rank"
-                c.execute(query)
-                for instrument in c.fetchall():
-                    if instrument[0] == work_data[3]:
-                        selected = ' selected="selected"'
-                    else:
-                        selected = ''
-                    instruments += '<option value="{}"{}>{}</option>\n'.format(
-                        instrument[0], selected, instrument[1])
-                # Then get all categories created by the user
-                query = """SELECT id, name FROM categories
-                WHERE creator = %s"""
-                c.execute(query, (login_session['user_id'],))
-                result = c.fetchall()
-                # and create a dropdown list from them.
-                # Mark the work's category as selected.
-                categories = '''<strong>Category: </strong><br />
-                <select id="category">\n'''
-                for category in result:
-                    if category[0] == work_data[4]:
-                        selected = ' selected="selected"'
-                    else:
-                        selected = ''
-                    categories += '''<option value="{}"{}>{}</option>
-                    \n'''.format(category[0], selected, category[1])
-                categories += '''</select> '''
-                categories += '''<button class="add long" type="button" '''
-                categories += '''onclick="replacePart'''
-                categories += '''('cat_selector',0,0,0)">'''
-                categories += '''+ New category</button>'''
-                # Create form from template and append it to the AJAX response
-                html_text = render_template(
-                    'editform.html',
-                    work=work,
-                    instruments=instruments,
-                    categories=categories,
-                    work_data=work_data,
-                    login_session=login_session)
-                response.append(html_text)
-        else:
-            response.append(0)
-            flash("You are not authorized to perform this operation!")
-    else:
-        response.append(0)
-        flash("You are not logged in!")
-    return json.dumps(response)
+    
+    with DBconn() as c:
+        # Get the selected work's data to fill out the form
+        query = '''SELECT w.composer, w.title, w.duration,
+        i.url, c.id FROM works w, instruments i, categories c
+        WHERE w.id = %s AND i.url = w.instrument
+        AND w.category = c.id'''
+        c.execute(query, (work,))
+        work_data = c.fetchone()
+        # Define variables for dropdown lists
+        instruments = ''
+        categories = ''
+        # Get options for selects: first get all instruments
+        # and create <option> tags.
+        # Mark the work's instrument as selected.
+        query = "SELECT url, name FROM instruments ORDER BY rank"
+        c.execute(query)
+        for instrument in c.fetchall():
+            if instrument[0] == work_data[3]:
+                selected = ' selected="selected"'
+            else:
+                selected = ''
+            instruments += '<option value="{}"{}>{}</option>\n'.format(
+                instrument[0], selected, instrument[1])
+        # Then get all categories created by the user
+        query = """SELECT id, name FROM categories
+        WHERE creator = %s"""
+        c.execute(query, (login_session['user_id'],))
+        result = c.fetchall()
+        # and create a dropdown list from them.
+        # Mark the work's category as selected.
+        categories = '''<strong>Category: </strong><br />
+        <select id="category">\n'''
+        for category in result:
+            if category[0] == work_data[4]:
+                selected = ' selected="selected"'
+            else:
+                selected = ''
+            categories += '''<option value="{}"{}>{}</option>
+            \n'''.format(category[0], selected, category[1])
+        categories += '''</select> '''
+        categories += '''<button class="add long" type="button" '''
+        categories += '''onclick="replacePart'''
+        categories += '''('cat_selector',0,0,0)">'''
+        categories += '''+ New category</button>'''
+        # Create form from template and append it to the AJAX response
+        html_text = render_template(
+            'editform.html',
+            work=work,
+            instruments=instruments,
+            categories=categories,
+            work_data=work_data,
+            login_session=login_session)
+        return html_text
 
 # Delete category
 

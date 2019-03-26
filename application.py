@@ -916,8 +916,10 @@ def addWork(user,request):
             c.execute(query, (category, user))
             # After inserting, use the ID of the new record as category
             # ID
-            query = 'SELECT id FROM categories WHERE name = %s'
-            c.execute(query, (category,))
+            query = '''SELECT id FROM categories 
+            WHERE name = %s 
+            AND creator = %s'''
+            c.execute(query, (category,user))
             category = c.fetchone()[0]
         # If no work ID passed, a new work must be added to the DB
         if not request.args.get('work'):
@@ -1064,7 +1066,7 @@ def delCat(user,request):
         WHERE id = %s 
         AND creator = %s'''
         c.execute(query, (category,user))
-        # Finally generate the repertoire list with the new element
+        # Finally generate the repertoire list
         works = listRepertoire(c, user)
         html_text = render_template(
             'repertoire.html',

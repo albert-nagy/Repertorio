@@ -1068,37 +1068,25 @@ def delCat(user,request):
 
 
 @app.route('/del_instr', methods=['POST'])
-def delInstr():
+@authorizeUser
+def delInstr(user,request):
     instrument = request.args.get('instrument')
-    user = request.args.get('id')
-    response = []
-    # If the user logged in is the owner of the profile, the first part of the
-    # response will be 1, otherwise 0. The second part will contain the data.
-    if 'user_id' in login_session:
-        if user == login_session['user_id']:
-            response.append(1)
-            with DBconn() as c:
-                # Check if there are works with this instrument in repertoires
-                query = "SELECT COUNT(*) FROM works WHERE instrument = %s"
-                c.execute(query, (instrument,))
-                num = c.fetchone()
-                print(num[0])
-                # If nothing found, delete the instrument
-                if num[0] == 0:
-                    query = "DELETE FROM instruments WHERE url = %s"
-                    c.execute(query, (instrument,))
-                # Reload the instrument list
-                result = listInstruments(c)
-                html_text = render_template('instruments.html', result=result,
-                                            login_session=login_session)
-                response.append(html_text)
-        else:
-            response.append(0)
-            flash("You are not authorized to perform this operation!")
-    else:
-        response.append(0)
-        flash("You are not logged in!")
-    return json.dumps(response)
+    
+    with DBconn() as c:
+        # Check if there are works with this instrument in repertoires
+        query = "SELECT COUNT(*) FROM works WHERE instrument = %s"
+        c.execute(query, (instrument,))
+        num = c.fetchone()
+        print(num[0])
+        # If nothing found, delete the instrument
+        if num[0] == 0:
+            query = "DELETE FROM instruments WHERE url = %s"
+            c.execute(query, (instrument,))
+        # Reload the instrument list
+        result = listInstruments(c)
+        html_text = render_template('instruments.html', result=result,
+                                    login_session=login_session)
+        return html_text
 
 # Delete user profile
 

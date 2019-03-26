@@ -602,117 +602,107 @@ def profileJSON(musician_id):
 
 
 @app.route('/infotoedit', methods=['POST'])
-def createForm():
+@authorizeUser
+def createForm(user,request):
     # Fill edit form with stored data
     what = request.args.get('what')
-    user = request.args.get('id')
-    response = []
-    # If the user logged in is the owner of the profile, the first part of the
-    # response will be 1, otherwise 0. The second part will contain the data.
-    if 'user_id' in login_session:
-        if user == login_session['user_id']:
-            response.append(1)
-            if what == 'bio':
-                with DBconn() as c:
-                    query = """SELECT bio FROM musicians WHERE url = %s"""
-                    c.execute(query, (login_session['user_id'],))
-                    bio = c.fetchone()
-                    if bio[0]:
-                        response.append(bio[0])
+
+    if what == 'bio':
+        with DBconn() as c:
+            query = """SELECT bio FROM musicians WHERE url = %s"""
+            c.execute(query, (login_session['user_id'],))
+            bio = c.fetchone()
+            if bio[0]:
+                response_data = bio[0]
+            else:
+                response_data = ''
+    elif what == 'contact':
+        with DBconn() as c:
+            query = """SELECT tel,address FROM musicians
+            WHERE url = %s"""
+            c.execute(query, (login_session['user_id'],))
+            response_data = c.fetchone()
+    elif what == 'add_work':
+        # Let's create the form to add new works to the repertoire!
+        # Search data for the form
+        with DBconn() as c:
+            instruments = ''
+            categories = ''
+            query = """SELECT i.url, COUNT(*) AS num
+            FROM instruments i, works w, musicians m
+            WHERE  m.url = %s AND m.url = w.creator
+            AND w.instrument = i.url
+            GROUP BY i.url
+            ORDER BY num DESC"""
+            c.execute(query, (login_session['user_id'],))
+            main_instrument = c.fetchone()
+            # Get options for selects: first get all instruments
+            # and create <option> tags
+            query = "SELECT url, name FROM instruments ORDER BY rank"
+            c.execute(query)
+            for instrument in c.fetchall():
+                try:
+                    if instrument[0] == main_instrument[0]:
+                        selected = ' selected="selected"'
                     else:
-                        response.append('')
-            elif what == 'contact':
-                with DBconn() as c:
-                    query = """SELECT tel,address FROM musicians
-                    WHERE url = %s"""
-                    c.execute(query, (login_session['user_id'],))
-                    response.append(c.fetchone())
-            elif what == 'add_work':
-                # Let's create the form to add new works to the repertoire!
-                # Search data for the form
-                with DBconn() as c:
-                    instruments = ''
-                    categories = ''
-                    query = """SELECT i.url, COUNT(*) AS num
-                    FROM instruments i, works w, musicians m
-                    WHERE  m.url = %s AND m.url = w.creator
-                    AND w.instrument = i.url
-                    GROUP BY i.url
-                    ORDER BY num DESC"""
-                    c.execute(query, (login_session['user_id'],))
-                    main_instrument = c.fetchone()
-                    # Get options for selects: first get all instruments
-                    # and create <option> tags
-                    query = "SELECT url, name FROM instruments ORDER BY rank"
-                    c.execute(query)
-                    for instrument in c.fetchall():
-                        try:
-                            if instrument[0] == main_instrument[0]:
-                                selected = ' selected="selected"'
-                            else:
-                                selected = ''
-                        except TypeError:
-                            selected = ''
-                        instruments += '<option value='
-                        instruments += '"{}"{}>{}</option>\n'.format(
-                            instrument[0], selected, instrument[1])
-                    # Then get all categories created by the user
-                    query = """SELECT id, name FROM categories
-                    WHERE creator = %s"""
-                    c.execute(query, (login_session['user_id'],))
-                    result = c.fetchall()
-                    # If no such category found, create input field for a new
-                    # one
-                    if len(result) == 0:
-                        categories = '''<strong>Create Category: </strong>
-                        <br />
-                        <input type="text" name="category" value="" />'''
-                    else:
-                        # If there are already categories created by the user,
-                        # create a select for them
-                        categories = '''<strong>Category: </strong><br />
-                        <select id="category">\n'''
-                        for category in result:
-                            categories += '''<option value="{}">{}</option>
-                            \n'''.format(category[0], category[1])
-                        categories += '''</select> '''
-                        categories += '''<button class="add long" '''
-                        categories += '''type="button" onclick="replacePart'''
-                        categories += '''('cat_selector',0,0,0)">'''
-                        categories += '''+ New category</button>'''
-                    # Create form from template and append it to the AJAX
-                    # response
-                    html_text = render_template(
-                        'addform.html',
-                        instruments=instruments,
-                        categories=categories,
-                        login_session=login_session)
-                    response.append(html_text)
-            # If it's a category, get the ID by slicing the string:
-            elif what[0:2] == 'c_':
-                category = what[2:]
-                # Get category name and add to the AJAX response
-                with DBconn() as c:
-                    query = "SELECT name FROM categories WHERE id = %s"
-                    c.execute(query, (category,))
-                    name = c.fetchone()
-                    response.append(name[0])
-            # If it's an instrument, get the ID by slicing the string:
-            elif what[0:2] == 'i_':
-                instrument = what[2:]
-                # Get category name and add to the AJAX response
-                with DBconn() as c:
-                    query = "SELECT name FROM instruments WHERE url = %s"
-                    c.execute(query, (instrument,))
-                    name = c.fetchone()
-                    response.append(name[0])
-        else:
-            response.append(0)
-            flash("You are not authorized to perform this operation!")
-    else:
-        response.append(0)
-        flash("You are not logged in!")
-    return json.dumps(response)
+                        selected = ''
+                except TypeError:
+                    selected = ''
+                instruments += '<option value='
+                instruments += '"{}"{}>{}</option>\n'.format(
+                    instrument[0], selected, instrument[1])
+            # Then get all categories created by the user
+            query = """SELECT id, name FROM categories
+            WHERE creator = %s"""
+            c.execute(query, (login_session['user_id'],))
+            result = c.fetchall()
+            # If no such category found, create input field for a new
+            # one
+            if len(result) == 0:
+                categories = '''<strong>Create Category: </strong>
+                <br />
+                <input type="text" name="category" value="" />'''
+            else:
+                # If there are already categories created by the user,
+                # create a select for them
+                categories = '''<strong>Category: </strong><br />
+                <select id="category">\n'''
+                for category in result:
+                    categories += '''<option value="{}">{}</option>
+                    \n'''.format(category[0], category[1])
+                categories += '''</select> '''
+                categories += '''<button class="add long" '''
+                categories += '''type="button" onclick="replacePart'''
+                categories += '''('cat_selector',0,0,0)">'''
+                categories += '''+ New category</button>'''
+            # Create form from template and append it to the AJAX
+            # response
+            html_text = render_template(
+                'addform.html',
+                instruments=instruments,
+                categories=categories,
+                login_session=login_session)
+            response_data = html_text
+    # If it's a category, get the ID by slicing the string:
+    elif what[0:2] == 'c_':
+        category = what[2:]
+        # Get category name and add to the AJAX response
+        with DBconn() as c:
+            query = "SELECT name FROM categories WHERE id = %s"
+            c.execute(query, (category,))
+            name = c.fetchone()
+            response_data = name[0]
+    # If it's an instrument, get the ID by slicing the string:
+    elif what[0:2] == 'i_':
+        instrument = what[2:]
+        # Get category name and add to the AJAX response
+        with DBconn() as c:
+            query = "SELECT name FROM instruments WHERE url = %s"
+            c.execute(query, (instrument,))
+            name = c.fetchone()
+            response_data = name[0]
+            
+    return response_data
 
 # Edit informations
 

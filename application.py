@@ -701,180 +701,176 @@ def createForm(user,request):
             c.execute(query, (instrument,))
             name = c.fetchone()
             response_data = name[0]
-            
+
     return response_data
 
 # Edit informations
 
 
 @app.route('/edit', methods=['POST'])
-def editInfo():
+@authorizeUser
+def editInfo(user,request):
     action = request.args.get('action')
     what = request.args.get('what')
-    user = request.args.get('id')
-    response = []
-    # If the user logged in is the owner of the profile, the first part of the
-    # response will be 1, otherwise 0. The second part will contain the data.
-    if 'user_id' in login_session:
-        if user == login_session['user_id']:
-            response.append(1)
-            if what == 'bio':
-                # Edit biography if not cancelling
-                if action != 'cancel':
-                    # If it is the user's own bio, store it in the DB
-                    text = request.args.get('text')
-                    with DBconn() as c:
-                        query = """UPDATE musicians
-                        SET bio = %s
-                        WHERE url = %s"""
-                        c.execute(query, (text, login_session['user_id']))
+    
+    if what == 'bio':
+        # Edit biography if not cancelling
+        if action != 'cancel':
+            # If it is the user's own bio, store it in the DB
+            text = request.args.get('text')
+            with DBconn() as c:
+                query = """UPDATE musicians
+                SET bio = %s
+                WHERE url = %s"""
+                c.execute(query, (text, login_session['user_id']))
 
-                # Replace form with the stored bio
-                with DBconn() as c:
-                    query = """SELECT bio FROM musicians WHERE url = %s"""
-                    c.execute(query, (login_session['user_id'],))
-                    bio = c.fetchone()
-                    if bio[0]:
-                        response.append(nl2br(bio[0]))
-                    else:
-                        response.append('')
+        # Replace form with the stored bio
+        with DBconn() as c:
+            query = """SELECT bio FROM musicians WHERE url = %s"""
+            c.execute(query, (login_session['user_id'],))
+            bio = c.fetchone()
+            if bio[0]:
+                response_data = nl2br(bio[0])
+            else:
+                response_data = ''
 
-            elif what == 'contact':
-                if action != 'cancel':
-                    # Edit contact info if not cancelling
-                    # If it is the user's own info, store it in the DB
-                    phone = request.args.get('phone')
-                    address = request.args.get('address')
-                    with DBconn() as c:
-                        query = """UPDATE musicians SET tel = %s, address = %s
-                        WHERE url = %s"""
-                        c.execute(query,
-                                  (phone, address, login_session['user_id']))
+    elif what == 'contact':
+        if action != 'cancel':
+            # Edit contact info if not cancelling
+            # If it is the user's own info, store it in the DB
+            phone = request.args.get('phone')
+            address = request.args.get('address')
+            with DBconn() as c:
+                query = """UPDATE musicians SET tel = %s, address = %s
+                WHERE url = %s"""
+                c.execute(query,
+                          (phone, address, login_session['user_id']))
 
-                # Replace form with the stored contact info
-                with DBconn() as c:
-                    query = """SELECT tel,address FROM musicians
+        # Replace form with the stored contact info
+        with DBconn() as c:
+            query = """SELECT tel,address FROM musicians
+            WHERE url = %s"""
+            c.execute(query, (login_session['user_id'],))
+            response_data = c.fetchone()
+
+    elif what == 'email_privacy':
+        with DBconn() as c:
+            # Check if email address is public
+            query = """SELECT public FROM musicians WHERE url = %s"""
+            c.execute(query, (login_session['user_id'],))
+            if c.fetchone()[0] == 0:
+                # If private, set it public and change button text
+                public = 1
+                button_text = "Set Private"
+            else:
+                # If public, set it private and change button text
+                public = 0
+                button_text = "Set Public"
+            query = """UPDATE musicians SET public = %s
+            WHERE url = %s"""
+            # Update email privacy in DB and return new button text
+            c.execute(query, (public, login_session['user_id']))
+            response_data = button_text
+    # If it's a category, get the ID by slicing the string:
+    elif what[0:2] == 'c_':
+        category = what[2:]
+        name = request.args.get('name')
+        with DBconn() as c:
+            if action != 'cancel':
+                # Update category name in DB
+                query = "UPDATE categories SET name = %s WHERE id = %s"
+                c.execute(query, (name, category))
+            works = listRepertoire(c, user)
+            html_text = render_template(
+                'repertoire.html',
+                works=works[1],
+                url=user,
+                login_session=login_session)
+            response_data = (works[0], html_text)
+    # If it's a instrument, get the ID by slicing the string:
+    elif what[0:2] == 'i_':
+        old_url = what[2:]
+        name = request.args.get('name')
+        with DBconn() as c:
+            # Define an error code for the cases when it is not
+            # permitted to change the instrument's name
+            err_code = 0
+            if action != 'cancel':
+                # Create new ID from name
+                new_url = slugify(name)
+                # Check if the new and the old ID are identical
+                num = 0
+                if new_url != old_url:
+                    # If not, check if an instrument exists
+                    # with the new ID
+                    query = """SELECT COUNT(*) FROM instruments
                     WHERE url = %s"""
-                    c.execute(query, (login_session['user_id'],))
-                    response.append(c.fetchone())
-
-            elif what == 'email_privacy':
-                with DBconn() as c:
-                    # Check if email address is public
-                    query = """SELECT public FROM musicians WHERE url = %s"""
-                    c.execute(query, (login_session['user_id'],))
-                    if c.fetchone()[0] == 0:
-                        # If private, set it public and change button text
-                        public = 1
-                        button_text = "Set Private"
-                    else:
-                        # If public, set it private and change button text
-                        public = 0
-                        button_text = "Set Public"
-                    query = """UPDATE musicians SET public = %s
-                    WHERE url = %s"""
-                    # Update email privacy in DB and return new button text
-                    c.execute(query, (public, login_session['user_id']))
-                    response.append(button_text)
-            # If it's a category, get the ID by slicing the string:
-            elif what[0:2] == 'c_':
-                category = what[2:]
-                name = request.args.get('name')
-                with DBconn() as c:
-                    if action != 'cancel':
-                        # Update category name in DB
-                        query = "UPDATE categories SET name = %s WHERE id = %s"
-                        c.execute(query, (name, category))
-                    works = listRepertoire(c, user)
-                    html_text = render_template(
-                        'repertoire.html',
-                        works=works[1],
-                        url=user,
-                        login_session=login_session)
-                    response_data = (works[0], html_text)
-                    response.append(response_data)
-            # If it's a instrument, get the ID by slicing the string:
-            elif what[0:2] == 'i_':
-                old_url = what[2:]
-                name = request.args.get('name')
-                with DBconn() as c:
-                    # Define an error code for the cases when it is not
-                    # permitted to change the instrument's name
-                    err_code = 0
-                    if action != 'cancel':
-                        # Create new ID from name
-                        new_url = slugify(name)
-                        # Check if the new and the old ID are identical
-                        num = 0
-                        if new_url != old_url:
-                            # If not, check if an instrument exists
-                            # with the new ID
-                            query = """SELECT COUNT(*) FROM instruments
-                            WHERE url = %s"""
-                            c.execute(query, (new_url,))
-                            existing_instrument = c.fetchone()
-                            num = existing_instrument[0]
-                        if num == 0:
-                            # Check if someone else lists the instrument
-                            # in their repertoire
-                            query = """SELECT COUNT (*) FROM works
-                            WHERE instrument = %s AND creator != %s"""
+                    c.execute(query, (new_url,))
+                    existing_instrument = c.fetchone()
+                    num = existing_instrument[0]
+                if num == 0:
+                    # Check if someone else lists the instrument
+                    # in their repertoire
+                    query = """SELECT COUNT (*) FROM works
+                    WHERE instrument = %s AND creator != %s"""
+                    c.execute(query, (old_url, user))
+                    other_users = c.fetchone()
+                    # Update instrument in DB only if no other user
+                    # found
+                    if other_users[0] == 0:
+                        # Check if there is a repertoire entry at all
+                        # and get instrument's place in the list
+                        try:
+                            query = """SELECT COUNT(w.id), i.rank
+                            FROM works w, instruments i
+                            WHERE w.instrument = %s
+                            AND i.url = w.instrument
+                            GROUP BY w.instrument,i.rank"""
+                            c.execute(query, (old_url,))
+                            inst_result = c. fetchone()
+                            num = inst_result[0]
+                            rank = inst_result[1]
+                        except TypeError:
+                            num = 0
+                        # If there are works in the repertoire with
+                        # this instrument, prevent IntegrityError
+                        # caused by existing foreign key constraint
+                        # by creating a new instrument, updating the
+                        # works and deleting the old one
+                        
+                        if num > 0:
+                            query = """INSERT INTO instruments
+                            (url,name,rank,creator)
+                            VALUES (%s,%s,%s,%s)"""
+                            c.execute(query, (new_url, name,
+                                              rank, user))
+                            query = """UPDATE works
+                            SET instrument = %s
+                            WHERE instrument = %s"""
+                            c.execute(query, (new_url, old_url))
+                            query = """DELETE FROM instruments
+                            WHERE url = %s AND creator = %s"""
                             c.execute(query, (old_url, user))
-                            other_users = c.fetchone()
-                            # Update instrument in DB only if no other user
-                            # found
-                            if other_users[0] == 0:
-                                # Check if there is a repertoire entry at all
-                                # and get instrument's place in the list
-                                query = """SELECT COUNT(w.id), i.rank
-                                FROM works w, instruments i
-                                WHERE w.instrument = %s
-                                AND i.url = w.instrument
-                                GROUP BY w.instrument,i.rank"""
-                                c.execute(query, (old_url,))
-                                inst_result = c. fetchone()
-                                # If there are works in the repertoire with
-                                # this instrument, prevent IntegrityError
-                                # caused by existing foreign key constraint
-                                # by creating a new instrument, updating the
-                                # works and deleting the old one
-                                if inst_result[0] > 0:
-                                    query = """INSERT INTO instruments
-                                    (url,name,rank,creator)
-                                    VALUES (%s,%s,%s,%s)"""
-                                    c.execute(query, (new_url, name,
-                                                      inst_result[1], user))
-                                    query = """UPDATE works
-                                    SET instrument = %s
-                                    WHERE instrument = %s"""
-                                    c.execute(query, (new_url, old_url))
-                                    query = """DELETE FROM instruments
-                                    WHERE url = %s AND creator = %s"""
-                                    c.execute(query, (old_url, user))
-                                # If no foreign key constraint present,
-                                # just update the instrument
-                                else:
-                                    query = """UPDATE instruments
-                                    SET url = %s, name = %s
-                                    WHERE url = %s AND creator = %s"""
-                                    c.execute(query,
-                                              (new_url, name, old_url, user))
-                            else:
-                                err_code = 2
+                        # If no foreign key constraint present,
+                        # just update the instrument
                         else:
-                            err_code = 1
-                    result = listInstruments(c)
-                    html_text = render_template(
-                        'instruments.html',
-                        result=result, login_session=login_session)
-                    response.append((html_text, err_code))
-        else:
-            response.append(0)
-            flash("You are not authorized to perform this operation!")
-    else:
-        response.append(0)
-        flash("You are not logged in!")
-    return json.dumps(response)
+                            query = """UPDATE instruments
+                            SET url = %s, name = %s
+                            WHERE url = %s AND creator = %s"""
+                            c.execute(query,
+                                      (new_url, name, old_url, user))
+                    else:
+                        err_code = 2
+                else:
+                    err_code = 1
+            result = listInstruments(c)
+            html_text = render_template(
+                'instruments.html',
+                result=result, login_session=login_session)
+            response_data = (html_text, err_code)
+
+    return response_data
+
 
 # Add work to repertoire
 

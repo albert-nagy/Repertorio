@@ -77,7 +77,11 @@ section#instrument_list, section.userinfo {
 
 .contact, .bio {
 		margin: 25px 50px;
-    	width: 70%;}
+    	}
+
+.contact {
+		width: 70%;
+		}
 
 p 		{
 		font-size: 15px;

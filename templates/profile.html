@@ -8,6 +8,7 @@
 		{% if url == login_session['user_id'] %}
 		<button id="del_profile" type="button" class="delete" onclick="delProfile('{{ login_session['user_id'] }}');">Delete my Profile</button>
 		{% endif %}
+		<img src="{{ personal_data[1] }}">
 		{% if url == login_session['user_id'] %}
 		<div class="contact">
 			<h2>Contact info</h2>
@@ -46,7 +47,6 @@
 			{% endif %}
 		</div>
 		{% endif %}
-		<img src="{{ personal_data[1] }}">
 		<div class="bio">
 			{% if not personal_data[2] and url == login_session['user_id'] %}
 			<h2>Biography</h2>

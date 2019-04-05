@@ -11,17 +11,19 @@ body 	{margin: 0;
 
 html	{background-color: #00002A;}
 
-header 	{height: 40px;
-	    width: 80%;
+header 	{
+	    width: 90%;
 	    margin: 0 auto;
-	    padding-top: 25px;}
+	    padding-top: 25px;
+		text-align: center;}
 
 header a {display: block;
-		color: white;}
+		color: white;
+		padding-right: 50px;}
 
-header button, #my-profile, #logout
-		{float: right;
-		margin-top: 7px;
+header button, #my-profile, #logout {
+		display: inline-block;
+		margin: 9px 7px 0 7px;
 		background: none;
     	border: 2px solid white;
     	border-radius: 3px;
@@ -31,32 +33,32 @@ header button, #my-profile, #logout
     	padding: 5px;
     	width: 120px;
     	letter-spacing: 1.1px;
-    	cursor: pointer;}
+    	cursor: pointer;
+    	text-align: center;}
 
-#logout {text-align: center;}
-
-#my-profile {margin-right: 30px;
-		text-align: center;}
 
 #site-header {float: left;
 		font-size: 36px;
-		margin: 0;
+		margin: 0 0 9px 0;
 		font-weight: bold;}
 
-#signinButton {float: right;
-		margin-top: 6px;
-		right: 0;}
+#signinButton, .fb-login-button {
+		display: inline-block;
+		vertical-align: top;
+		margin: 10px 7px 0 7px;
+		}
 
-.fb-login-button {float: right;
-		margin: 6px 25px 0 0;
-		height: 36px;}
+.fb-login-button {
+		height: 36px;
+		}
 
 .flash 	{color: white;
-    	margin: 5px 0 0 0;
+    	margin: 0;
     	text-align: center;
-    	min-height: 30px;}
+    	clear: both;}
 
 .flash ul {margin: 0;
+		padding: 15px 0 0 0;
 		-webkit-animation: fadein 1s; 
        	-moz-animation: fadein 1s;
         -ms-animation: fadein 1s;
@@ -92,14 +94,16 @@ header button, #my-profile, #logout
     to   { opacity: 1; }
 }
 
-main 	{width: 80%;
+main 	{width: 90%;
 		margin: 0 auto;}
 
 section {
-		background-color: white;
-		width: 47%;
+		width: 100%;
+		margin: 25px 0 0;
+		border-radius: 5px;
 		padding: 25px 0;
-		border-radius: 5px;}
+    	background-color: white;
+		}
 
 section h1  {
 		font-size: 24px;
@@ -107,7 +111,7 @@ section h1  {
 		color: #B98348;}
 
 section ul {margin: 30px 0 0;
-		padding-left: 65px;}
+		padding-left: 50px;}
 
 section li {margin-bottom: 12px;
     	font-size: 17px;
@@ -130,11 +134,14 @@ section button {
     	padding: 3px 8px;
     	letter-spacing: 1.1px;
     	cursor: pointer;
-    	height: 29px;}
+    	min-height: 29px;}
 
 .small {
-		height: 23px;
+		height: 45px;
+		width: 45px;
 		padding: 3px;}
+
+.work .small {margin-top: 15px;}
 
 .delete	{
 		color: red;
@@ -155,7 +162,7 @@ section button {
 .long	{min-width: 180px;}
 
 #del_profile {
-		margin: 8px 0 0 50px;}
+		margin: 8px 0 0 30px;}
 
 .edit-contact {
 		margin-top: 15px;}
@@ -191,14 +198,9 @@ select {padding: 5px;
     	text-transform: uppercase;
     	font-size: 14px;}
 
-section#instrument_list {
-		float: left;
-		clear: none;}
-
-section#musicians_list {
-		min-height: 621px;
-		float: right;
-		clear: none;}
+section#instrument_list, section#musicians_list {
+		clear: both;
+		min-height: 250px;}
 
 .musicians-by-instrument li {
 		margin-left: 50px;}
@@ -208,7 +210,7 @@ section#musicians_list {
 
 .musicians-by-instrument h1, .userinfo h1 {
 		font-size: 34px;
-		margin-left: 50px;}
+		margin-left: 30px;}
 
 .userinfo {
 		position: relative;
@@ -216,18 +218,19 @@ section#musicians_list {
 
 .userinfo img {
 		border-radius: 50%;
-    	height: 200px;
-    	position: absolute;
-    	top: 50px;
-    	right: 50px;}
+	    height: 100px;
+	    display: block;
+	    margin: 15px auto 0;
+		}
 
 #instruments {
 		font-size: 16px;
-		margin: 5px 0 0 50px;
+		margin: 5px 0 0 30px;
 		color: #555;}
 
-.contact, .bio {margin: 25px 50px;
-    	width: 70%;}
+.contact, .bio {
+		margin: 25px 30px;
+    	}
 
 .bio 	{width: unset;
 		text-align: justify;}
@@ -241,32 +244,30 @@ h2 		{font-size: 22px;
 		margin: 0 0 15px;}
 
 p 		{margin: 8px 0 0;
-    	font-size: 15px;
-    	line-height: 20px;}
+    	font-size: 16px;
+    	line-height: 22px;}
 
 .repertoire h2 {
-		margin-left: 50px;}
+		margin-left: 30px;}
 
 .inst-block {
-		margin: 0 50px;
-		-webkit-column-count: 2;
-		-moz-column-count: 2;
-		column-count: 2;
-		-webkit-column-gap: 6%;
-  		-moz-column-gap: 6%;
-  		column-gap: 6%;}
+		margin: 0 30px;
+		}
 
 .category {
 		background-color: #F2E7DC;
-		display: inline-block;
-		width: 89%;
-		padding: 20px 25px 25px;
+		display: block;
+		padding: 15px;
 		margin-top: 25px;
 		border-radius: 3px;}
 
+.category p strong {
+		display: block;
+		}
+
 h3 		{color: #B98348;
 		text-transform: uppercase;
-		margin: 25px 0 0 50px;}
+		margin: 25px 0 0 30px;}
 
 h4		{margin: 0 0 25px;
     	font-size: 18px;
@@ -278,7 +279,7 @@ h4		{margin: 0 0 25px;
 		color: #777;}
 
 
-footer {width: 80%;
+footer {width: 90%;
 		padding: 25px 0;
     	clear: both;
     	margin: 0 auto;}

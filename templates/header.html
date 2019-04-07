@@ -1,43 +1,7 @@
 <header>
 <a id="site-header" href="/">Repertor &bull; io</a>
 {% if 'username' not in login_session %}
-<div id="signinButton"></div>
-
-<script>
-
-  $('#signinButton').click(function() {
-    function signInCallback(authResult){
-      if (authResult['code']){
-        
-        $.ajax({
-          type: 'POST',
-          url: '/gconnect?state={{STATE}}',
-          headers: {
-          'X-Requested-With': 'XMLHttpRequest'
-          },
-          contentType: 'application/octet-stream; charset=utf-8',
-          success: function(result) {
-        // Handle or verify the server response if necessary.
-         if (result) 
-          window.location.href = result;
-        else 
-          alert('Login failed');
-        },
-          processData:false,
-          data:authResult['code']
-        });
-      } else{
-        // handle error
-        console.log('There was an error: ' + authResult['error']);
-        $('#result').html('Failed to make a server-side call. Check your configuration and console.');
-      }
-    }
-    auth2.grantOfflineAccess().then(signInCallback);
-  });
-
-</script>
-
-	<script>
+  <script>
   window.fbAsyncInit = function() {
     FB.init({
       appId      : '298184334231264',
@@ -73,17 +37,50 @@
       success: function(result) {
         // Handle or verify the server response if necessary.
         if (result)
-        	window.location.href = result;
+          window.location.href = result;
         else
-      		alert('Login failed');
+          alert('Login failed');
       }
       
   });
     });
   }
 </script>
+<div class="fb-login-button" data-width="116" data-size="medium" data-button-type="login_with" data-auto-logout-link="false" data-use-continue-as="false" scope="public_profile,email" onlogin="sendTokenToServer();"></div> <div id="signinButton"></div>
 
-<div class="fb-login-button" data-width="116" data-size="medium" data-button-type="login_with" data-auto-logout-link="false" data-use-continue-as="false" scope="public_profile,email" onlogin="sendTokenToServer();"></div>
+<script>
+
+  $('#signinButton').click(function() {
+    function signInCallback(authResult){
+      if (authResult['code']){
+        
+        $.ajax({
+          type: 'POST',
+          url: '/gconnect?state={{STATE}}',
+          headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+          },
+          contentType: 'application/octet-stream; charset=utf-8',
+          success: function(result) {
+        // Handle or verify the server response if necessary.
+         if (result) 
+          window.location.href = result;
+        else 
+          alert('Login failed');
+        },
+          processData:false,
+          data:authResult['code']
+        });
+      } else{
+        // handle error
+        console.log('There was an error: ' + authResult['error']);
+        $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+      }
+    }
+    auth2.grantOfflineAccess().then(signInCallback);
+  });
+
+</script>
 		{% else %}
 		<script type="text/javascript">
 function Logout()

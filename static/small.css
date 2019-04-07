@@ -19,7 +19,7 @@ header 	{
 
 header a {display: block;
 		color: white;
-		padding-right: 50px;}
+		padding-right: 60px;}
 
 header button, #my-profile, #logout {
 		display: inline-block;
@@ -45,12 +45,11 @@ header button, #my-profile, #logout {
 #signinButton, .fb-login-button {
 		display: inline-block;
 		vertical-align: top;
-		margin: 10px 7px 0 7px;
+		margin: 10px 0 0 0;
 		}
 
 .fb-login-button {
-		height: 36px;
-		}
+		margin-left: 0;}
 
 .flash 	{color: white;
     	margin: 0;

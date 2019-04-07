@@ -1,25 +1,31 @@
-header 	{width: 85%;}
+header 	{width: 85%;
+		text-align: right;}
+
+header a {
+		padding-right: 40px;}
 
 header button, #my-profile, #logout
-		{float: right;
+		{
 		margin: 9px 0 0 0;
 		}
 
-#logout {text-align: center;}
+#logout {
+		text-align: center;
+		}
 
-#my-profile {margin-right: 15px;
-		text-align: center;}
+#my-profile {
+		text-align: center;
+		margin-left: 15px;}
 
 #site-header {
 		margin: 0;
 		}
 
-#signinButton {float: right;
-		margin: 10px 0 0 0;}
+#signinButton {
+		margin: 10px 15px 0 0;}
 
 .fb-login-button {
-		float: right;
-		margin: 10px 15px 0 0;
+		margin: 10px 0 0 0;
 		}
 
 

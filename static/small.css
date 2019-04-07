@@ -12,6 +12,7 @@ body 	{margin: 0;
 html	{background-color: #00002A;}
 
 header 	{
+		position: relative;
 	    width: 90%;
 	    margin: 0 auto;
 	    padding-top: 25px;
@@ -21,9 +22,26 @@ header a {display: block;
 		color: white;
 		padding-right: 60px;}
 
-header button, #my-profile, #logout {
+nav 	{
+		display: block;
+		width: 280px;
+		height: 100%;
+		background-color: #444;
+		position: fixed;
+		top: 0;
+		right: -280px;
+		z-index: 1;
+  		transition: right 0.3s ease;
+		}
+
+nav.open {
+  		right: 0;
+		}
+
+
+nav button,  #home, #my-profile, #logout {
 		display: inline-block;
-		margin: 9px 7px 0 7px;
+		margin: 0 10px 18px;
 		background: none;
     	border: 2px solid white;
     	border-radius: 3px;
@@ -36,6 +54,20 @@ header button, #my-profile, #logout {
     	cursor: pointer;
     	text-align: center;}
 
+#home 	{
+		margin-top: 50px;
+		}
+
+#open_menu {
+		position: absolute;
+		right: 0;
+		top: 36px;
+		}
+
+#close_menu {
+		display: block;
+		margin: 36px 0 0 40px;
+		}
 
 #site-header {float: left;
 		font-size: 36px;
@@ -45,11 +77,11 @@ header button, #my-profile, #logout {
 #signinButton, .fb-login-button {
 		display: inline-block;
 		vertical-align: top;
-		margin: 10px 0 0 0;
 		}
 
-.fb-login-button {
-		margin-left: 0;}
+#signinButton {
+		margin-top: 18px;
+	}
 
 .flash 	{color: white;
     	margin: 0;

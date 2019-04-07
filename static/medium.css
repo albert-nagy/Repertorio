@@ -4,9 +4,19 @@ header 	{width: 85%;
 header a {
 		padding-right: 40px;}
 
-header button, #my-profile, #logout
-		{
+nav 	{
+		display: inline-block;
+		width: 425px;
+		background: transparent;
+		position: static;
+		}
+
+nav button, #my-profile, #logout {
 		margin: 9px 0 0 0;
+		}
+
+#home, #open_menu, #close_menu	{
+		display: none;
 		}
 
 #logout {

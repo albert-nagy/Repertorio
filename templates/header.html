@@ -1,7 +1,23 @@
 <header>
 <a id="site-header" href="/">Repertor &bull; io</a>
+<img id="open_menu" src="/static/menu_w.png" alt="Menu" />
+<nav>
+<img id="close_menu" src="/static/menu_w.png" alt="Close menu" />
+<a id="home" href="/">Home</a>
 {% if 'username' not in login_session %}
   <script>
+  var open_menu = document.getElementById('open_menu');
+  var close_menu = document.getElementById('close_menu');
+  var nav = document.getElementsByTagName('nav')[0];
+
+  open_menu.addEventListener("click", function(){
+  nav.classList.add("open");
+  });
+
+  close_menu.addEventListener("click", function(){
+  nav.classList.remove("open");
+  }); 
+
   window.fbAsyncInit = function() {
     FB.init({
       appId      : '298184334231264',
@@ -101,6 +117,7 @@ function Logout()
           <a id="my-profile" href="{{ url_for('showProfile', musician_id=login_session['user_id']) }}">My Profile</a>
           {% endif %}
 {% endif %}
+</nav>
 	</header>
   <div class = 'flash'>
           {% with messages = get_flashed_messages() %}

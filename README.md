@@ -114,4 +114,3 @@ The JSON endpoint of a musician lists the user's all info with their repertoire,
 - Change pop-up windows of third-party authentication for embedded auth windows
 - Hide email addresses from spambots
 - Extend form validation
-- Responsive design
